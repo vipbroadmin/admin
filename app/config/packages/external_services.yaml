@@ -1,0 +1,16 @@
+parameters:
+    players_service.url: '%env(PLAYERS_SERVICE_URL)%'
+    players_service.timeout_default: 10
+    players_service.timeout: '%env(default:players_service.timeout_default:int:PLAYERS_SERVICE_TIMEOUT)%'
+    wallets_service.url_default: 'http://host.docker.internal:8081'
+    wallets_service.timeout_default: 5
+    wallets_service.url: '%env(default:wallets_service.url_default:WALLETS_SERVICE_URL)%'
+    wallets_service.timeout: '%env(default:wallets_service.timeout_default:int:WALLETS_SERVICE_TIMEOUT)%'
+    withdrawals_service.url_default: 'http://host.docker.internal:8082'
+    withdrawals_service.timeout_default: 5
+    withdrawals_service.url: '%env(default:withdrawals_service.url_default:WITHDRAWALS_SERVICE_URL)%'
+    withdrawals_service.timeout: '%env(default:withdrawals_service.timeout_default:int:WITHDRAWALS_SERVICE_TIMEOUT)%'
+    reports_service.url_default: 'http://host.docker.internal:8083'
+    reports_service.timeout_default: 5
+    reports_service.url: '%env(default:reports_service.url_default:REPORTS_SERVICE_URL)%'
+    reports_service.timeout: '%env(default:reports_service.timeout_default:int:REPORTS_SERVICE_TIMEOUT)%'
