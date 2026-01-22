@@ -20,7 +20,8 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./app:/var/www/html
-      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini:ro
+      - ./docker/php/conf.d/xdebug.ini/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini:ro
+      - ./docker/php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
