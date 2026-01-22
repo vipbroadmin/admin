@@ -9,18 +9,12 @@ services:
     depends_on:
       php:
         condition: service_healthy
-    healthcheck:
-      test: wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1
-      interval: 10s
-      timeout: 3s
-      retries: 10
 
   php:
     image: thecodingmachine/php:8.5-v5-fpm
     working_dir: /var/www/html
     volumes:
       - ./app:/var/www/html
-      - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini:ro
     env_file:
       - ./env.local
     environment:
@@ -29,17 +23,17 @@ services:
       PHP_EXTENSION_PGSQL: "1"
       PHP_EXTENSION_ZIP: "1"
       PHP_EXTENSION_OPCACHE: "1"
-      PHP_EXTENSION_XDEBUG: "1"
 
-      TEMPLATE_PHP_INI: development
+      TEMPLATE_PHP_INI: production
       PHP_INI_MEMORY_LIMIT: 512M
       PHP_INI_DISPLAY_ERRORS: "1"
       PHP_INI_ERROR_REPORTING: E_ALL
       PHP_INI_DATE__TIMEZONE: Europe/Prague
       PHP_INI_OPCACHE__ENABLE: "1"
       PHP_INI_OPCACHE__ENABLE_CLI: "1"
+
     healthcheck:
-      test: php -r "echo 'ok';" >/dev/null 2>&1 || exit 1
+      test: php -v || exit 1
       interval: 10s
       timeout: 5s
       retries: 10
@@ -52,25 +46,9 @@ services:
       POSTGRES_PASSWORD: app
     volumes:
       - pg_data:/var/lib/postgresql/data
-    healthcheck:
-      test: pg_isready -U app -d app
-      interval: 10s
-      timeout: 5s
-      retries: 10
 
   redis:
     image: redis:7-alpine
-    healthcheck:
-      test: redis-cli ping
-      interval: 10s
-      timeout: 3s
-      retries: 10
-
-  composer:
-    image: composer:2
-    working_dir: /app
-    volumes:
-      - ./app:/app
 
 volumes:
   pg_data:
