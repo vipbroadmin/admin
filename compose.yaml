@@ -2,7 +2,7 @@ services:
   nginx:
     image: nginx:stable-alpine
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./app:/var/www/html:ro
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
@@ -21,8 +21,6 @@ services:
     volumes:
       - ./app:/var/www/html
       - ./docker/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/99-xdebug.ini:ro
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     env_file:
       - ./app/env.local
     environment:
@@ -55,7 +53,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: pg_isready -U app -d app -h localhost
+      test: pg_isready -U app -d app
       interval: 10s
       timeout: 5s
       retries: 10
