@@ -40,6 +40,18 @@ final class AuthController extends AbstractController
         }
 
         $result = $handler->handle($query);
+        $total  = $result['total'];
+
+        if ($limit !== null) {
+            if ($offset > $total) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'not_found',
+                        'message' => 'Requested range exceeds total items',
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            }
+        }
         return $this->json($result);
     }
 
