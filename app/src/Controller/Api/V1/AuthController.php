@@ -24,10 +24,8 @@ final class AuthController extends AbstractController
         ValidatorInterface $validator,
         ListUsersHandler $handler
     ): JsonResponse {
-        //$offset = $request->query->has('offset') ? $request->query->getInt('offset') : null;
-        //$limit = $request->query->has('limit') ? $request->query->getInt('limit') : null;
-        $offset = $request->query->has('offset') ? max(0, $request->query->getInt('offset')) : 0;
-        $limit = $request->query->has('limit') ? max(0, $request->query->getInt('limit')) : null;
+        $offset = $request->query->has('offset') ? $request->query->getInt('offset') : null;
+        $limit = $request->query->has('limit') ? $request->query->getInt('limit') : null;
 
         $query = new ListUsersQuery(offset: $offset, limit: $limit);
 
@@ -42,18 +40,6 @@ final class AuthController extends AbstractController
         }
 
         $result = $handler->handle($query);
-        $total  = $result['total'];
-
-        if ($limit !== null) {
-            if (($offset + $limit) > $total) {
-                return $this->json([
-                    'error' => [
-                        'code' => 'not_found',
-                        'message' => 'Requested range exceeds total items',
-                    ],
-                ], Response::HTTP_NOT_FOUND);
-            }
-        }
         return $this->json($result);
     }
 
