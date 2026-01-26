@@ -29,7 +29,6 @@ final class AuthController extends AbstractController
         $offset = $request->query->has('offset') ? max(0, $request->query->getInt('offset')) : 0;
         $limit = $request->query->has('limit') ? max(0, $request->query->getInt('limit')) : null;
 
-
         $query = new ListUsersQuery(offset: $offset, limit: $limit);
 
         $errors = $validator->validate($query);
@@ -45,10 +44,8 @@ final class AuthController extends AbstractController
         $result = $handler->handle($query);
         $total  = $result['total'];
 
-        $exceedsTotal = false;
-
         if ($limit !== null) {
-            if ($offset + $limit > $total) {
+            if (($offset + $limit) > $total) {
                 return $this->json([
                     'error' => [
                         'code' => 'not_found',
