@@ -22,6 +22,9 @@ final class ReportsController extends AbstractController
         ValidatorInterface $validator,
         ListTransactionsHandler $handler
     ): JsonResponse {
+        $limit = $request->query->has('limit') ? $request->query->getInt('limit') : null;
+        $offset = $request->query->has('offset') ? $request->query->getInt('offset') : null;
+
         $query = new ListTransactionsQuery(
             playerId: $request->query->get('playerId'),
             walletId: $request->query->get('walletId'),
@@ -32,8 +35,8 @@ final class ReportsController extends AbstractController
             to: $request->query->get('to'),
             sortBy: $request->query->get('sortBy'),
             order: $request->query->get('order'),
-            limit: $request->query->getInt('limit') ?: null,
-            offset: $request->query->getInt('offset') ?: null,
+            limit: $limit,
+            offset: $offset,
         );
 
         $errors = $validator->validate($query);
@@ -48,6 +51,17 @@ final class ReportsController extends AbstractController
 
         try {
             $result = $handler->handle($query);
+            $total = $result['total'] ?? (isset($result['items']) && is_array($result['items']) ? count($result['items']) : count($result));
+
+            if ($offset !== null && $offset > 0 && $offset >= $total) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'not_found',
+                        'message' => 'Requested range exceeds total items',
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             return $this->json($result);
         } catch (ExternalServiceValidationException $e) {
             return $this->json([

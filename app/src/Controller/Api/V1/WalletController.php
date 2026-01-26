@@ -26,10 +26,12 @@ final class WalletController extends AbstractController
     #[Route('/by-player-id/{playerId}', methods: ['GET'])]
     public function getByPlayerId(
         string $playerId,
+        Request $request,
         ValidatorInterface $validator,
         WalletsServiceClient $client
     ): JsonResponse {
         $query = new GetWalletsQuery(playerId: $playerId);
+        $offset = $request->query->has('offset') ? $request->query->getInt('offset') : null;
 
         $errors = $validator->validate($query);
         if (count($errors) > 0) {
@@ -43,6 +45,17 @@ final class WalletController extends AbstractController
 
         try {
             $wallets = $client->getWalletsByPlayerId($query->playerId);
+            $total = $wallets['total'] ?? (isset($wallets['wallets']) && is_array($wallets['wallets']) ? count($wallets['wallets']) : count($wallets));
+
+            if ($offset !== null && $offset > 0 && $offset >= $total) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'not_found',
+                        'message' => 'Requested range exceeds total items',
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             return $this->json($wallets);
         } catch (ExternalServiceNotFoundException $e) {
             return $this->json([

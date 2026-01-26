@@ -71,7 +71,19 @@ final class PlayerController extends AbstractController
 
         try {
             $result = $handler->handle($query);
-            return $this->json($result->toArray());
+            $payload = $result->toArray();
+            $total = $payload['total'] ?? count($payload['items'] ?? []);
+
+            if ($query->offset > 0 && $query->offset >= $total) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'not_found',
+                        'message' => 'Requested range exceeds total items',
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            return $this->json($payload);
         } catch (ExternalServiceException $e) {
             return $this->json([
                 'error' => [

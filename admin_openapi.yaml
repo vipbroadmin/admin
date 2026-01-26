@@ -73,6 +73,8 @@ paths:
                   value:
                     items: []
                     total: 0
+        "404":
+          $ref: "#/components/responses/NotFound"
     post:
       tags: [Auth]
       summary: Create user
@@ -155,6 +157,8 @@ paths:
                     total: 0
         "400":
           $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
     post:
       tags: [Players]
       summary: Create player (admin)
@@ -408,6 +412,8 @@ paths:
                   summary: No wallets
                   value:
                     wallets: []
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/finances/wallets:
     post:
       tags: [Wallets]
@@ -686,6 +692,8 @@ paths:
                   summary: No transactions
                   value:
                     transactions: []
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   securitySchemes:
     bearerAuth:
