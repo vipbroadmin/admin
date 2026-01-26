@@ -8,11 +8,13 @@ use App\Application\User\CreateStaffUser\CreateStaffUserCommand;
 use App\Application\User\CreateStaffUser\CreateStaffUserHandler;
 use App\Application\User\ListUsers\ListUsersHandler;
 use App\Application\User\ListUsers\ListUsersQuery;
+use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/users/staffs')]
@@ -20,10 +22,11 @@ final class AuthController extends AbstractController
 {
     #[Route('', methods: ['GET'])]
     public function list(
-        Request $request,
+        Request            $request,
         ValidatorInterface $validator,
-        ListUsersHandler $handler
-    ): JsonResponse {
+        ListUsersHandler   $handler
+    ): JsonResponse
+    {
         $offset = $request->query->has('offset') ? $request->query->getInt('offset') : null;
         $limit = $request->query->has('limit') ? $request->query->getInt('limit') : null;
 
@@ -40,27 +43,28 @@ final class AuthController extends AbstractController
         }
 
         $result = $handler->handle($query);
-        $total  = $result['total'];
+        $total = $result['total'];
 
-        if ($limit !== null) {
-            if ($offset > $total) {
-                return $this->json([
-                    'error' => [
-                        'code' => 'not_found',
-                        'message' => 'Requested range exceeds total items',
-                    ],
-                ], Response::HTTP_NOT_FOUND);
-            }
+
+        if ($limit !== null && $limit > $total) {
+            return $this->json([
+                'error' => [
+                    'code' => 'not_found',
+                    'message' => 'Requested range exceeds total items',
+                ],
+            ], Response::HTTP_NOT_FOUND);
         }
+
         return $this->json($result);
     }
 
     #[Route('', methods: ['POST'])]
     public function create(
-        Request $request,
-        ValidatorInterface $validator,
+        Request                $request,
+        ValidatorInterface     $validator,
         CreateStaffUserHandler $handler
-    ): JsonResponse {
+    ): JsonResponse
+    {
         $payload = json_decode($request->getContent() ?: '', true);
         if (!is_array($payload)) {
             return $this->json([
@@ -89,7 +93,7 @@ final class AuthController extends AbstractController
 
         try {
             $user = $handler->handle($cmd);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             return $this->json([
                 'error' => [
                     'code' => 'validation_failed',
@@ -130,10 +134,11 @@ final class AuthController extends AbstractController
 
     #[Route('/{id}/ban', methods: ['PUT'])]
     public function ban(
-        int $id,
+        int                $id,
         ValidatorInterface $validator,
-        BlockUserHandler $handler
-    ): JsonResponse {
+        BlockUserHandler   $handler
+    ): JsonResponse
+    {
         $cmd = new BlockUserCommand(id: $id, blocked: true);
 
         $errors = $validator->validate($cmd);
@@ -160,7 +165,7 @@ final class AuthController extends AbstractController
     }
 
     /**
-     * @param \Symfony\Component\Validator\ConstraintViolationListInterface $violations
+     * @param ConstraintViolationListInterface $violations
      * @return array<int, array{field: string, message: string}>
      */
     private function violationsToArray($violations): array
