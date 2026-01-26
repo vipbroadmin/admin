@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "symfony-devstack-players-api",
-		"name": "Symfony DevStack - Players API",
+		"_postman_id": "admin bff",
+		"name": "Admin",
 		"description": "REST API для работы с Players Service через Symfony приложение",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},

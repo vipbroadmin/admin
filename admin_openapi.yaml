@@ -2,7 +2,11 @@ openapi: 3.0.3
 info:
   title: Symfony DevStack API
   version: 1.0.0
-  description: API gateway for players, wallets, withdrawals, and reports services.
+  description: |
+    API gateway for players, wallets, withdrawals, and reports services.
+    Conventions:
+      - Array fields are always arrays (empty array when no data).
+      - Optional fields may be null when data is unavailable.
 servers:
   - url: http://localhost:8080
 security:
@@ -63,6 +67,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UsersListResponse"
+              examples:
+                empty:
+                  summary: Empty list
+                  value:
+                    items: []
+                    total: 0
     post:
       tags: [Auth]
       summary: Create user
@@ -109,6 +119,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/UserProfile"
+              examples:
+                withEmptyRoles:
+                  summary: No roles assigned
+                  value:
+                    data:
+                      username: "admin"
+                      roles: []
         "401":
           $ref: "#/components/responses/Unauthorized"
   /api/v1/players:
@@ -130,6 +147,12 @@ paths:
             application/json:
               schema:
                 type: object
+              examples:
+                empty:
+                  summary: Empty list
+                  value:
+                    items: []
+                    total: 0
         "400":
           $ref: "#/components/responses/ValidationError"
     post:
@@ -202,6 +225,11 @@ paths:
             application/json:
               schema:
                 type: object
+              examples:
+                empty:
+                  summary: No players found
+                  value:
+                    data: []
   /api/v1/players/{id}/documents:
     get:
       tags: [Players]
@@ -215,6 +243,11 @@ paths:
             application/json:
               schema:
                 type: object
+              examples:
+                empty:
+                  summary: No documents
+                  value:
+                    documents: []
   /api/v1/players/document/{id}:
     patch:
       tags: [Players]
@@ -328,6 +361,12 @@ paths:
             application/json:
               schema:
                 type: object
+              examples:
+                notAvailable:
+                  summary: Requisites not available
+                  value:
+                    paymentMethodId: null
+                    formData: null
     post:
       tags: [Players]
       summary: Update player requisites
@@ -364,6 +403,11 @@ paths:
             application/json:
               schema:
                 type: object
+              examples:
+                empty:
+                  summary: No wallets
+                  value:
+                    wallets: []
   /api/v1/finances/wallets:
     post:
       tags: [Wallets]
@@ -637,6 +681,11 @@ paths:
             application/json:
               schema:
                 type: object
+              examples:
+                empty:
+                  summary: No transactions
+                  value:
+                    transactions: []
 components:
   securitySchemes:
     bearerAuth:
@@ -750,11 +799,15 @@ components:
               type: array
               items:
                 type: string
+              minItems: 0
+              default: []
     UsersListResponse:
       type: object
       properties:
         items:
           type: array
+          minItems: 0
+          default: []
           items:
             type: object
             properties:
@@ -766,6 +819,8 @@ components:
                 type: array
                 items:
                   type: string
+                minItems: 0
+                default: []
               isBlocked:
                 type: boolean
         total:
@@ -781,6 +836,8 @@ components:
           type: array
           items:
             type: string
+          minItems: 0
+          default: []
       required: [username, password]
     CreateStaffUserResponse:
       type: object
@@ -796,6 +853,8 @@ components:
               type: array
               items:
                 type: string
+              minItems: 0
+              default: []
             isBlocked:
               type: boolean
     CreatePlayerRequest:
@@ -811,26 +870,35 @@ components:
           type: string
         promoCode:
           type: string
+          nullable: true
       required: [login, password, country, currency]
     UpdatePlayerRequest:
       type: object
       properties:
         login:
           type: string
+          nullable: true
         email:
           type: string
+          nullable: true
         phone:
           type: string
+          nullable: true
         name:
           type: string
+          nullable: true
         surname:
           type: string
+          nullable: true
         nickname:
           type: string
+          nullable: true
         currency:
           type: string
+          nullable: true
         country:
           type: string
+          nullable: true
     UpdatePasswordRequest:
       type: object
       properties:
@@ -851,6 +919,8 @@ components:
           items:
             type: string
             format: uuid
+          minItems: 0
+          default: []
       required: [ids]
     DocumentStatusRequest:
       type: object
@@ -863,10 +933,14 @@ components:
       properties:
         paymentMethodId:
           type: string
+          nullable: true
         formData:
           type: object
+          nullable: true
     KickPlayersRequest:
       type: array
+      minItems: 0
+      default: []
       items:
         type: string
         format: uuid
@@ -885,6 +959,7 @@ components:
           type: string
         type:
           type: string
+          nullable: true
       required: [playerId, currency]
     WalletDepositRequest:
       type: object
