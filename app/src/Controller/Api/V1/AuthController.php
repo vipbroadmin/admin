@@ -46,7 +46,7 @@ final class AuthController extends AbstractController
         $total = $result['total'];
 
 
-        if ($limit !== null && $limit > $total) {
+        if ($offset >= $total || ($limit !== null && $offset + $limit > $total)) {
             return $this->json([
                 'error' => [
                     'code' => 'not_found',
