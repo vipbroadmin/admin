@@ -3,6 +3,8 @@
 namespace App\Controller\Api\V1;
 
 use App\Application\Wallet\Cashout\WalletCashoutCommand;
+use App\Application\Wallet\ConfirmWithdrawal\ConfirmWithdrawalCommand;
+use App\Application\Wallet\ConfirmWithdrawal\ConfirmWithdrawalHandler;
 use App\Application\Wallet\CreateWallet\CreateWalletCommand;
 use App\Application\Wallet\Deposit\WalletDepositCommand;
 use App\Application\Wallet\GetWallets\GetWalletsQuery;
@@ -281,6 +283,63 @@ final class WalletController extends AbstractController
                 'walletId' => $cmd->walletId,
                 'amount' => $cmd->amount,
             ]);
+            return $this->json($wallet);
+        } catch (ExternalServiceValidationException $e) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'message' => $e->getMessage(),
+                ],
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (ExternalServiceNotFoundException $e) {
+            return $this->json([
+                'error' => [
+                    'code' => 'not_found',
+                    'message' => $e->getMessage(),
+                ],
+            ], Response::HTTP_NOT_FOUND);
+        } catch (ExternalServiceException $e) {
+            return $this->json([
+                'error' => [
+                    'code' => 'external_service_error',
+                    'message' => $e->getMessage(),
+                ],
+            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/confirm-withdrawal', methods: ['POST'])]
+    public function confirmWithdrawal(
+        Request $request,
+        ValidatorInterface $validator,
+        ConfirmWithdrawalHandler $handler
+    ): JsonResponse {
+        $payload = json_decode($request->getContent() ?: '', true);
+        if (!is_array($payload)) {
+            return $this->json([
+                'error' => [
+                    'code' => 'invalid_json',
+                    'message' => 'Request body must be valid JSON.',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $cmd = new ConfirmWithdrawalCommand(
+            withdrawalRequestId: (string)($payload['withdrawalRequestId'] ?? ''),
+        );
+
+        $errors = $validator->validate($cmd);
+        if (count($errors) > 0) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'details' => $this->violationsToArray($errors),
+                ],
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $wallet = $handler->handle($cmd);
             return $this->json($wallet);
         } catch (ExternalServiceValidationException $e) {
             return $this->json([

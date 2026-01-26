@@ -19,7 +19,8 @@ final class WithdrawalsServiceClient extends BaseHttpClient
      * POST /finances/withdrawal-requests
      *
      * @param array{
-     *     userId: string,
+     *     playerId: string,
+     *     walletId: string,
      *     currency: string,
      *     amount: string,
      *     paymentSystemId: string

@@ -91,4 +91,19 @@ final class WalletsServiceClient extends BaseHttpClient
 
         return $this->decodeResponse($response);
     }
+
+    /**
+     * POST /finances/wallets/confirm-withdrawal
+     *
+     * @param array{withdrawalRequestId: string} $data
+     * @return array<string, mixed>
+     */
+    public function confirmWithdrawal(array $data): array
+    {
+        $response = $this->request('POST', '/finances/wallets/confirm-withdrawal', [
+            'json' => $data,
+        ]);
+
+        return $this->decodeResponse($response);
+    }
 }

@@ -31,6 +31,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/LoginResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
       security: []
   /users/staffs/logout:
     delete:
@@ -43,6 +47,8 @@ paths:
             application/json:
               schema:
                 type: boolean
+        "401":
+          $ref: "#/components/responses/Unauthorized"
   /users/staffs:
     get:
       tags: [Auth]
@@ -88,6 +94,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
   /users/staffs/me:
@@ -417,6 +425,23 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/WalletUnlockRequest"
+      responses:
+        "200":
+          description: Wallet updated
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/v1/finances/wallets/confirm-withdrawal:
+    post:
+      tags: [Wallets]
+      summary: Confirm withdrawal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfirmWithdrawalRequest"
       responses:
         "200":
           description: Wallet updated
@@ -899,10 +924,20 @@ components:
         amount:
           type: string
       required: [playerId, walletId, amount]
+    ConfirmWithdrawalRequest:
+      type: object
+      properties:
+        withdrawalRequestId:
+          type: string
+          format: uuid
+      required: [withdrawalRequestId]
     CreateWithdrawalRequest:
       type: object
       properties:
-        userId:
+        playerId:
+          type: string
+          format: uuid
+        walletId:
           type: string
           format: uuid
         currency:
@@ -911,7 +946,7 @@ components:
           type: string
         paymentSystemId:
           type: string
-      required: [userId, currency, amount, paymentSystemId]
+      required: [playerId, walletId, currency, amount, paymentSystemId]
     RejectWithdrawalRequest:
       type: object
       properties:

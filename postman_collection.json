@@ -936,6 +936,46 @@
 						"description": "Разблокировать средства в кошельке"
 					},
 					"response": []
+				},
+				{
+					"name": "Confirm Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"withdrawalRequestId\": \"{{withdrawal_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets/confirm-withdrawal",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets",
+								"confirm-withdrawal"
+							]
+						},
+						"description": "Подтвердить вывод средств"
+					},
+					"response": []
 				}
 			],
 			"description": "Endpoints для работы с Wallets Service"
@@ -986,7 +1026,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"userId\": \"{{player_id}}\",\n  \"currency\": \"USD\",\n  \"amount\": \"50.00\",\n  \"paymentSystemId\": \"{{payment_system_id}}\"\n}",
+							"raw": "{\n  \"playerId\": \"{{player_id}}\",\n  \"walletId\": \"{{wallet_id}}\",\n  \"currency\": \"USD\",\n  \"amount\": \"50.00\",\n  \"paymentSystemId\": \"{{payment_system_id}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

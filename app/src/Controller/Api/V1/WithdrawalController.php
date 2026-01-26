@@ -75,7 +75,8 @@ final class WithdrawalController extends AbstractController
         }
 
         $cmd = new CreateWithdrawalCommand(
-            userId: (string)($payload['userId'] ?? ''),
+            playerId: (string)($payload['playerId'] ?? ''),
+            walletId: (string)($payload['walletId'] ?? ''),
             currency: (string)($payload['currency'] ?? ''),
             amount: (string)($payload['amount'] ?? ''),
             paymentSystemId: (string)($payload['paymentSystemId'] ?? ''),
@@ -93,7 +94,8 @@ final class WithdrawalController extends AbstractController
 
         try {
             $result = $client->create([
-                'userId' => $cmd->userId,
+                'playerId' => $cmd->playerId,
+                'walletId' => $cmd->walletId,
                 'currency' => $cmd->currency,
                 'amount' => $cmd->amount,
                 'paymentSystemId' => $cmd->paymentSystemId,
