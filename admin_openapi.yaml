@@ -13,7 +13,6 @@ security:
   - bearerAuth: []
 tags:
   - name: Auth
-  - name: Users
   - name: Players
   - name: Wallets
   - name: Withdrawals
@@ -132,47 +131,6 @@ paths:
                       roles: []
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /user/v1:
-    get:
-      tags: [Users]
-      summary: Get user by ID
-      parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        "200":
-          description: User data
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/ValidationError"
-        "404":
-          $ref: "#/components/responses/NotFound"
-    post:
-      tags: [Users]
-      summary: Create user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CreateUserRequest"
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/ValidationError"
-        "422":
-          $ref: "#/components/responses/ValidationError"
   /api/v1/players:
     get:
       tags: [Players]
@@ -884,26 +842,6 @@ components:
                 type: string
               minItems: 0
               default: []
-    CreateUserRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        email:
-          type: string
-      required: [name, email]
-    UserResponse:
-      type: object
-      properties:
-        data:
-          type: object
-          properties:
-            id:
-              type: integer
-            name:
-              type: string
-            email:
-              type: string
     UsersListResponse:
       type: object
       properties:
