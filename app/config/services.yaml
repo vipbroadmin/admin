@@ -50,5 +50,11 @@ services:
             $baseUrl: '%reports_service.url%'
             $timeout: '%reports_service.timeout%'
 
+    App\Infrastructure\Http\ReferenceServiceClient:
+        arguments:
+            $httpClient: '@http_client'
+            $baseUrl: '%reference_service.url%'
+            $timeout: '%reference_service.timeout%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -14,3 +14,7 @@ parameters:
     reports_service.timeout_default: 5
     reports_service.url: '%env(default:reports_service.url_default:REPORTS_SERVICE_URL)%'
     reports_service.timeout: '%env(default:reports_service.timeout_default:int:REPORTS_SERVICE_TIMEOUT)%'
+    reference_service.url_default: 'http://host.docker.internal:8090'
+    reference_service.timeout_default: 5
+    reference_service.url: '%env(default:reference_service.url_default:REFERENCE_SERVICE_URL)%'
+    reference_service.timeout: '%env(default:reference_service.timeout_default:int:REFERENCE_SERVICE_TIMEOUT)%'

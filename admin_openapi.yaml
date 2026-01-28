@@ -18,6 +18,7 @@ tags:
   - name: Wallets
   - name: Withdrawals
   - name: Reports
+  - name: Reference
 paths:
   /users/staffs/login:
     post:
@@ -736,6 +737,38 @@ paths:
                     transactions: []
         "404":
           $ref: "#/components/responses/NotFound"
+  /api/v1/reference/countries:
+    get:
+      tags: [Reference]
+      summary: List countries
+      responses:
+        "200":
+          description: Countries list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CountriesResponse"
+              examples:
+                empty:
+                  summary: No countries
+                  value:
+                    countries: []
+  /api/v1/reference/currencies:
+    get:
+      tags: [Reference]
+      summary: List currencies
+      responses:
+        "200":
+          description: Currencies list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrenciesResponse"
+              examples:
+                empty:
+                  summary: No currencies
+                  value:
+                    currencies: []
 components:
   securitySchemes:
     bearerAuth:
@@ -927,6 +960,36 @@ components:
               default: []
             isBlocked:
               type: boolean
+    CountriesResponse:
+      type: object
+      properties:
+        countries:
+          type: array
+          minItems: 0
+          default: []
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              name_en:
+                type: string
+    CurrenciesResponse:
+      type: object
+      properties:
+        currencies:
+          type: array
+          minItems: 0
+          default: []
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              name_en:
+                type: string
+              symbol:
+                type: string
     CreatePlayerRequest:
       type: object
       properties:
