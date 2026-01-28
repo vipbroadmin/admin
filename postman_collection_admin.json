@@ -1,0 +1,1532 @@
+{
+	"info": {
+		"_postman_id": "admin bff",
+		"name": "Admin API",
+		"description": "REST API для работы с admin bff",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"const path = pm.request.url.getPath ? pm.request.url.getPath() : pm.request.url.path.join('/');",
+					"if (!path.endsWith('users/staffs/login')) {",
+					"  const token = pm.collectionVariables.get('jwt') || pm.environment.get('jwt');",
+					"  if (token) {",
+					"    pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${token}` });",
+					"  }",
+					"}"
+				]
+			}
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/staffs/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"staffs",
+								"login"
+							]
+						},
+						"description": "Получить JWT по логину и паролю"
+					},
+					"response": [],
+					"auth": {
+						"type": "noauth"
+					}
+				},
+				{
+					"name": "Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/staffs/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"staffs",
+								"me"
+							]
+						},
+						"description": "Проверить JWT и получить пользователя"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/staffs/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"staffs",
+								"logout"
+							]
+						},
+						"description": "Выход из системы"
+					},
+					"response": []
+				},
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/staffs?offset=0&limit=20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"staffs"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								}
+							]
+						},
+						"description": "Список пользователей"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"staff1\",\n  \"password\": \"secret123\",\n  \"roles\": [\"ROLE_ADMIN\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/staffs",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"staffs"
+							]
+						},
+						"description": "Создать пользователя"
+					},
+					"response": []
+				},
+				{
+					"name": "Ban User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/staffs/{{staff_user_id}}/ban",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"staffs",
+								"{{staff_user_id}}",
+								"ban"
+							]
+						},
+						"description": "Заблокировать пользователя"
+					},
+					"response": []
+				}
+			],
+			"description": "JWT авторизация"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/user/v1?id={{user_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"v1"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "{{user_id}}",
+									"description": "ID пользователя"
+								}
+							]
+						},
+						"description": "Получить пользователя по ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/user/v1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"user",
+								"v1"
+							]
+						},
+						"description": "Создать пользователя"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints для работы с пользователями"
+		},
+		{
+			"name": "Players",
+			"item": [
+				{
+					"name": "List Players",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/players?offset=0&limit=20&sortBy=createdAt&order=desc",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players"
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Смещение для пагинации"
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"description": "Лимит записей (1-1000)"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Поиск по email или login",
+									"disabled": true
+								},
+								{
+									"key": "country",
+									"value": "",
+									"description": "Фильтр по стране (ISO 3166-1 alpha-2)",
+									"disabled": true
+								},
+								{
+									"key": "currency",
+									"value": "",
+									"description": "Фильтр по валюте",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "createdAt",
+									"description": "Поле для сортировки: createdAt, login, email"
+								},
+								{
+									"key": "order",
+									"value": "desc",
+									"description": "Порядок сортировки: asc или desc"
+								}
+							]
+						},
+						"description": "Получить список игроков с пагинацией и фильтрами"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Player",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"login\": \"player123\",\n  \"password\": \"securePassword123\",\n  \"country\": \"US\",\n  \"currency\": \"USD\",\n  \"promoCode\": \"WELCOME2024\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players"
+							]
+						},
+						"description": "Создать нового игрока (admin версия)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Player",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": "Получить игрока по ID (UUID)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Player Documents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/documents",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"documents"
+							]
+						},
+						"description": "Получить документы игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Document Status",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"approved\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/document/{{document_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"document",
+								"{{document_id}}"
+							]
+						},
+						"description": "Изменить статус документа"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Players Info",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"ids\": [\n    \"{{player_id}}\",\n    \"550e8400-e29b-41d4-a716-446655440001\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/info",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"info"
+							]
+						},
+						"description": "Получить информацию о нескольких игроках по массиву ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Player",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newemail@example.com\",\n  \"phone\": \"+1234567890\",\n  \"name\": \"John\",\n  \"surname\": \"Doe\",\n  \"nickname\": \"johndoe\",\n  \"currency\": \"EUR\",\n  \"country\": \"DE\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}"
+							]
+						},
+						"description": "Обновить профиль игрока (все поля опциональны)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Player Level",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"level\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/level",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"level"
+							]
+						},
+						"description": "Изменить уровень игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Player Requisites",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/requisites",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"requisites"
+							]
+						},
+						"description": "Получить реквизиты игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Player Requisites",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentMethodId\": \"{{payment_method_id}}\",\n  \"formData\": {\n    \"iban\": \"DE1234567890\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/requisites",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"requisites"
+							]
+						},
+						"description": "Обновить реквизиты игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Kick Players",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  \"{{player_id}}\"\n]",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/kick",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"kick"
+							]
+						},
+						"description": "Принудительный выход игроков"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"password\": \"newSecurePassword456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"password"
+							]
+						},
+						"description": "Изменить пароль игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Ban Player",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/ban",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"ban"
+							]
+						},
+						"description": "Заблокировать игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Unban Player",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/unban",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"players",
+								"{{player_id}}",
+								"unban"
+							]
+						},
+						"description": "Разблокировать игрока"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints для работы с игроками через Players Service"
+		},
+		{
+			"name": "Wallets",
+			"item": [
+				{
+					"name": "Get Wallets By Player ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets/by-player-id/{{player_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets",
+								"by-player-id",
+								"{{player_id}}"
+							]
+						},
+						"description": "Получить кошельки игрока по player_id"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Wallet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"playerId\": \"{{player_id}}\",\n  \"currency\": \"USD\",\n  \"type\": \"real\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets"
+							]
+						},
+						"description": "Создать кошелек для игрока"
+					},
+					"response": []
+				},
+				{
+					"name": "Deposit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"playerId\": \"{{player_id}}\",\n  \"walletId\": \"{{wallet_id}}\",\n  \"amount\": \"100.00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets/deposit",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets",
+								"deposit"
+							]
+						},
+						"description": "Пополнить кошелек"
+					},
+					"response": []
+				},
+				{
+					"name": "Cashout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"playerId\": \"{{player_id}}\",\n  \"walletId\": \"{{wallet_id}}\",\n  \"amount\": \"50.00\",\n  \"paymentSystemId\": \"{{payment_system_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets/cashout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets",
+								"cashout"
+							]
+						},
+						"description": "Запросить вывод средств"
+					},
+					"response": []
+				},
+				{
+					"name": "Unlock",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"playerId\": \"{{player_id}}\",\n  \"walletId\": \"{{wallet_id}}\",\n  \"amount\": \"50.00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets/unlock",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets",
+								"unlock"
+							]
+						},
+						"description": "Разблокировать средства в кошельке"
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"withdrawalRequestId\": \"{{withdrawal_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/wallets/confirm-withdrawal",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"wallets",
+								"confirm-withdrawal"
+							]
+						},
+						"description": "Подтвердить вывод средств"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints для работы с Wallets Service"
+		},
+		{
+			"name": "Withdrawals",
+			"item": [
+				{
+					"name": "Get Withdrawal Request",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}"
+							]
+						},
+						"description": "Получить заявку на вывод по ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Withdrawal Request",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"playerId\": \"{{player_id}}\",\n  \"walletId\": \"{{wallet_id}}\",\n  \"currency\": \"USD\",\n  \"amount\": \"50.00\",\n  \"paymentSystemId\": \"{{payment_system_id}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests"
+							]
+						},
+						"description": "Создать заявку на вывод"
+					},
+					"response": []
+				},
+				{
+					"name": "Take Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Manager-Id",
+								"value": "{{manager_id}}"
+							},
+							{
+								"key": "X-Manager-Role",
+								"value": "{{manager_role}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/take",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}",
+								"take"
+							]
+						},
+						"description": "Взять заявку в работу"
+					},
+					"response": []
+				},
+				{
+					"name": "Request Verification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Manager-Id",
+								"value": "{{manager_id}}"
+							},
+							{
+								"key": "X-Manager-Role",
+								"value": "{{manager_role}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/request-verification",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}",
+								"request-verification"
+							]
+						},
+						"description": "Запросить верификацию"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Manager-Id",
+								"value": "{{manager_id}}"
+							},
+							{
+								"key": "X-Manager-Role",
+								"value": "{{manager_role}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/approve",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}",
+								"approve"
+							]
+						},
+						"description": "Одобрить заявку"
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Manager-Id",
+								"value": "{{manager_id}}"
+							},
+							{
+								"key": "X-Manager-Role",
+								"value": "{{manager_role}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"reason\": \"KYC failed\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/reject",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}",
+								"reject"
+							]
+						},
+						"description": "Отклонить заявку"
+					},
+					"response": []
+				},
+				{
+					"name": "Retry Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Manager-Id",
+								"value": "{{manager_id}}"
+							},
+							{
+								"key": "X-Manager-Role",
+								"value": "{{manager_role}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/retry",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}",
+								"retry"
+							]
+						},
+						"description": "Повторить выплату"
+					},
+					"response": []
+				},
+				{
+					"name": "Return Withdrawal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Manager-Id",
+								"value": "{{manager_id}}"
+							},
+							{
+								"key": "X-Manager-Role",
+								"value": "{{manager_role}}"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/return",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"withdrawal-requests",
+								"{{withdrawal_id}}",
+								"return"
+							]
+						},
+						"description": "Вернуть заявку"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints для работы с Withdrawals Service"
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "List Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/finances/reports/transactions?playerId={{player_id}}&walletId={{wallet_id}}&currency=USD&type=deposit&reason=&from=2024-01-01T00:00:00Z&to=2024-12-31T23:59:59Z&sortBy=created_at&order=desc&limit=20&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"finances",
+								"reports",
+								"transactions"
+							],
+							"query": [
+								{
+									"key": "playerId",
+									"value": "{{player_id}}",
+									"description": "ID игрока"
+								},
+								{
+									"key": "walletId",
+									"value": "{{wallet_id}}",
+									"description": "ID кошелька",
+									"disabled": true
+								},
+								{
+									"key": "currency",
+									"value": "USD",
+									"description": "Валюта",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "deposit",
+									"description": "Тип операции",
+									"disabled": true
+								},
+								{
+									"key": "reason",
+									"value": "",
+									"description": "Причина операции",
+									"disabled": true
+								},
+								{
+									"key": "from",
+									"value": "2024-01-01T00:00:00Z",
+									"description": "Дата начала (RFC3339)",
+									"disabled": true
+								},
+								{
+									"key": "to",
+									"value": "2024-12-31T23:59:59Z",
+									"description": "Дата окончания (RFC3339)",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "created_at",
+									"description": "Поле сортировки",
+									"disabled": true
+								},
+								{
+									"key": "order",
+									"value": "desc",
+									"description": "Порядок сортировки",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"description": "Лимит",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Смещение",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Получить список транзакций"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints для работы с Reports Service"
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://85.208.186.213:8080",
+			"type": "string"
+		},
+		{
+			"key": "player_id",
+			"value": "550e8400-e29b-41d4-a716-446655440000",
+			"type": "string",
+			"description": "UUID игрока (замените на реальный ID после создания)"
+		},
+		{
+			"key": "wallet_id",
+			"value": "11111111-2222-3333-4444-555555555555",
+			"type": "string",
+			"description": "UUID кошелька (замените на реальный ID после создания)"
+		},
+		{
+			"key": "withdrawal_id",
+			"value": "66666666-7777-8888-9999-000000000000",
+			"type": "string",
+			"description": "UUID заявки на вывод"
+		},
+		{
+			"key": "manager_id",
+			"value": "manager-123",
+			"type": "string",
+			"description": "ID менеджера для workflow"
+		},
+		{
+			"key": "manager_role",
+			"value": "operator",
+			"type": "string",
+			"description": "Роль менеджера для workflow"
+		},
+		{
+			"key": "payment_system_id",
+			"value": "ps-1",
+			"type": "string",
+			"description": "ID платежной системы"
+		},
+		{
+			"key": "document_id",
+			"value": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+			"type": "string",
+			"description": "UUID документа игрока"
+		},
+		{
+			"key": "payment_method_id",
+			"value": "pm-1",
+			"type": "string",
+			"description": "ID платежного метода"
+		},
+		{
+			"key": "user_id",
+			"value": "1",
+			"type": "string",
+			"description": "ID пользователя (user/v1)"
+		},
+		{
+			"key": "staff_user_id",
+			"value": "1",
+			"type": "string",
+			"description": "ID пользователя (staff)"
+		},
+		{
+			"key": "jwt",
+			"value": "",
+			"type": "string",
+			"description": "JWT токен (Bearer)"
+		}
+	]
+}
