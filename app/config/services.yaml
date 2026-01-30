@@ -56,5 +56,11 @@ services:
             $baseUrl: '%reference_service.url%'
             $timeout: '%reference_service.timeout%'
 
+    App\Infrastructure\Http\SlotegratorServiceClient:
+        arguments:
+            $httpClient: '@http_client'
+            $baseUrl: '%slotegrator_service.url%'
+            $timeout: '%slotegrator_service.timeout%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

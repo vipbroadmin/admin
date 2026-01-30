@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+//LEGACY! DONT USE THIS CONTROLLER!
 #[Route('/user/v1')]
 final class UserController extends AbstractController
 {

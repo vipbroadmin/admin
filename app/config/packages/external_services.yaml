@@ -18,3 +18,7 @@ parameters:
     reference_service.timeout_default: 5
     reference_service.url: '%env(default:reference_service.url_default:REFERENCE_SERVICE_URL)%'
     reference_service.timeout: '%env(default:reference_service.timeout_default:int:REFERENCE_SERVICE_TIMEOUT)%'
+    slotegrator_service.url_default: 'http://host.docker.internal:8092'
+    slotegrator_service.timeout_default: 5
+    slotegrator_service.url: '%env(default:slotegrator_service.url_default:SLOTEGRATOR_SERVICE_URL)%'
+    slotegrator_service.timeout: '%env(default:slotegrator_service.timeout_default:int:SLOTEGRATOR_SERVICE_TIMEOUT)%'

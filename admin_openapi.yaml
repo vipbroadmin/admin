@@ -18,6 +18,7 @@ tags:
   - name: Withdrawals
   - name: Reports
   - name: Reference
+  - name: Slotegrator
 paths:
   /users/staffs/login:
     post:
@@ -727,6 +728,106 @@ paths:
                   summary: No currencies
                   value:
                     currencies: []
+  /api/v1/slotegrator/providers:
+    get:
+      tags: [Slotegrator]
+      summary: List providers
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: Providers list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorProvidersResponse"
+              examples:
+                empty:
+                  summary: No providers
+                  value:
+                    items: []
+        "400":
+          $ref: "#/components/responses/ValidationError"
+  /api/v1/slotegrator/games:
+    get:
+      tags: [Slotegrator]
+      summary: List games
+      parameters:
+        - name: provider_id
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: Games list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorGamesResponse"
+              examples:
+                empty:
+                  summary: No games
+                  value:
+                    items: []
+        "400":
+          $ref: "#/components/responses/ValidationError"
+  /api/v1/slotegrator/launch:
+    post:
+      tags: [Slotegrator]
+      summary: Launch game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlotegratorLaunchRequest"
+      responses:
+        "200":
+          description: Launch response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorLaunchResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
 components:
   securitySchemes:
     bearerAuth:
@@ -928,6 +1029,60 @@ components:
                 type: string
               symbol:
                 type: string
+    SlotegratorProvidersResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 0
+          default: []
+          items:
+            type: object
+            additionalProperties: true
+    SlotegratorGamesResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 0
+          default: []
+          items:
+            type: object
+            additionalProperties: true
+    SlotegratorLaunchRequest:
+      type: object
+      properties:
+        game_uuid:
+          type: string
+        player_id:
+          type: string
+        player_name:
+          type: string
+        currency:
+          type: string
+        session_id:
+          type: string
+        device:
+          type: string
+          enum: [desktop, mobile]
+        return_url:
+          type: string
+        language:
+          type: string
+        email:
+          type: string
+        lobby_data:
+          type: string
+        demo:
+          type: boolean
+      required: [game_uuid, player_id, player_name, currency]
+    SlotegratorLaunchResponse:
+      type: object
+      properties:
+        session_id:
+          type: string
+        url:
+          type: string
     CreatePlayerRequest:
       type: object
       properties:
