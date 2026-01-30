@@ -18,7 +18,7 @@ tags:
   - name: Withdrawals
   - name: Reports
   - name: Reference
-  - name: Slotegrator
+  - name: Providers
 paths:
   /users/api/v1/staffs/login:
     post:
@@ -730,7 +730,7 @@ paths:
                     currencies: []
   /provider/{provider}/api/v1/providers:
     get:
-      tags: [Slotegrator]
+      tags: [Providers]
       summary: List providers
       parameters:
         - name: provider
@@ -772,7 +772,7 @@ paths:
           $ref: "#/components/responses/ValidationError"
   /provider/{provider}/api/v1/games:
     get:
-      tags: [Slotegrator]
+      tags: [Providers]
       summary: List games
       parameters:
         - name: provider
@@ -819,7 +819,7 @@ paths:
           $ref: "#/components/responses/ValidationError"
   /provider/{provider}/api/v1/launch:
     post:
-      tags: [Slotegrator]
+      tags: [Providers]
       summary: Launch game
       parameters:
         - name: provider
