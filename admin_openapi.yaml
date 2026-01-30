@@ -20,7 +20,7 @@ tags:
   - name: Reference
   - name: Slotegrator
 paths:
-  /users/staffs/login:
+  /api/v1/users/staffs/login:
     post:
       tags: [Auth]
       summary: Login and get JWT
@@ -42,7 +42,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
       security: []
-  /users/staffs/logout:
+  /api/v1/users/staffs/logout:
     delete:
       tags: [Auth]
       summary: Logout (stateless)
@@ -55,7 +55,7 @@ paths:
                 type: boolean
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /users/staffs:
+  /api/v1/users/staffs:
     get:
       tags: [Auth]
       summary: List users
@@ -95,7 +95,7 @@ paths:
                 $ref: "#/components/schemas/CreateStaffUserResponse"
         "422":
           $ref: "#/components/responses/ValidationError"
-  /users/staffs/{id}/ban:
+  /api/v1/users/staffs/{id}/ban:
     put:
       tags: [Auth]
       summary: Block user
@@ -112,7 +112,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-  /users/staffs/me:
+  /api/v1/users/staffs/me:
     get:
       tags: [Auth]
       summary: Get current user

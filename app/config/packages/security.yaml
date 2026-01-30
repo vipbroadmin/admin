@@ -14,13 +14,13 @@ security:
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
         login:
-            pattern: ^/users/staffs/login$
+            pattern: ^/api/v1/users/staffs/login$
             lazy: true
             provider: app_user_provider
             stateless: true
             user_checker: App\Security\UserChecker
             json_login:
-                check_path: /users/staffs/login
+                check_path: /api/v1/users/staffs/login
                 username_path: username
                 password_path: password
                 success_handler: lexik_jwt_authentication.handler.authentication_success
@@ -34,7 +34,7 @@ security:
 
     # Note: Only the *first* matching rule is applied
     access_control:
-        - { path: ^/users/staffs/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/v1/users/staffs/login, roles: PUBLIC_ACCESS }
         - { path: ^/users/healthcheck, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

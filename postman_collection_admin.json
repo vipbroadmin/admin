@@ -22,7 +22,7 @@
 				"type": "text/javascript",
 				"exec": [
 					"const path = pm.request.url.getPath ? pm.request.url.getPath() : pm.request.url.path.join('/');",
-					"if (!path.endsWith('users/staffs/login')) {",
+					"if (!path.endsWith('api/v1/users/staffs/login')) {",
 					"  const token = pm.collectionVariables.get('jwt') || pm.environment.get('jwt');",
 					"  if (token) {",
 					"    pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${token}` });",
@@ -60,11 +60,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/users/staffs/login",
+							"raw": "{{base_url}}/api/v1/users/staffs/login",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"users",
 								"staffs",
 								"login"
@@ -88,11 +90,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/users/staffs/me",
+							"raw": "{{base_url}}/api/v1/users/staffs/me",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"users",
 								"staffs",
 								"me"
@@ -113,11 +117,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/users/staffs/logout",
+							"raw": "{{base_url}}/api/v1/users/staffs/logout",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"users",
 								"staffs",
 								"logout"
@@ -138,11 +144,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/users/staffs?offset=0&limit=20",
+							"raw": "{{base_url}}/api/v1/users/staffs?offset=0&limit=20",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"users",
 								"staffs"
 							],
@@ -185,11 +193,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/users/staffs",
+							"raw": "{{base_url}}/api/v1/users/staffs",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"users",
 								"staffs"
 							]
@@ -209,11 +219,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/users/staffs/{{staff_user_id}}/ban",
+							"raw": "{{base_url}}/api/v1/users/staffs/{{staff_user_id}}/ban",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"users",
 								"staffs",
 								"{{staff_user_id}}",
@@ -226,80 +238,6 @@
 				}
 			],
 			"description": "JWT авторизация"
-		},
-		{
-			"name": "Users",
-			"item": [
-				{
-					"name": "Get User",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{base_url}}/user/v1?id={{user_id}}",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"v1"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "{{user_id}}",
-									"description": "ID пользователя"
-								}
-							]
-						},
-						"description": "Получить пользователя по ID"
-					},
-					"response": []
-				},
-				{
-					"name": "Create User",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/user/v1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"user",
-								"v1"
-							]
-						},
-						"description": "Создать пользователя"
-					},
-					"response": []
-				}
-			],
-			"description": "Endpoints для работы с пользователями"
 		},
 		{
 			"name": "Players",
@@ -1509,12 +1447,6 @@
 			"value": "pm-1",
 			"type": "string",
 			"description": "ID платежного метода"
-		},
-		{
-			"key": "user_id",
-			"value": "1",
-			"type": "string",
-			"description": "ID пользователя (user/v1)"
 		},
 		{
 			"key": "staff_user_id",
