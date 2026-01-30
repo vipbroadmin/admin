@@ -728,11 +728,16 @@ paths:
                   summary: No currencies
                   value:
                     currencies: []
-  /api/v1/slotegrator/providers:
+  /api/v1/providers/{provider}/providers:
     get:
       tags: [Slotegrator]
       summary: List providers
       parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
         - name: status
           in: query
           schema:
@@ -765,11 +770,16 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/slotegrator/games:
+  /api/v1/providers/{provider}/games:
     get:
       tags: [Slotegrator]
       summary: List games
       parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
         - name: provider_id
           in: query
           schema:
@@ -807,10 +817,16 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/slotegrator/launch:
+  /api/v1/providers/{provider}/launch:
     post:
       tags: [Slotegrator]
       summary: Launch game
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:

@@ -18,15 +18,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/slotegrator')]
+#[Route('/api/v1/providers/{provider}')]
 final class SlotegratorController extends AbstractController
 {
     #[Route('/providers', methods: ['GET'])]
     public function providers(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         GetProvidersHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $query = new GetProvidersQuery(
             status: $request->query->get('status'),
             search: $request->query->get('search'),
@@ -59,10 +62,13 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/games', methods: ['GET'])]
     public function games(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         GetGamesHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $query = new GetGamesQuery(
             providerId: $request->query->has('provider_id') ? $request->query->getInt('provider_id') : null,
             status: $request->query->get('status'),
@@ -96,10 +102,13 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/launch', methods: ['POST'])]
     public function launch(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         LaunchGameHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $payload = json_decode($request->getContent() ?: '', true);
         if (!is_array($payload)) {
             return $this->json([
@@ -158,6 +167,13 @@ final class SlotegratorController extends AbstractController
                     'message' => $e->getMessage(),
                 ],
             ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private function assertProvider(string $provider): void
+    {
+        if ($provider !== 'slotegrator') {
+            throw $this->createNotFoundException('Provider not found');
         }
     }
 
