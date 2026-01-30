@@ -40,7 +40,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/players')]
+#[Route('/players/api/v1')]
 final class PlayerController extends AbstractController
 {
     #[Route('', methods: ['GET'])]

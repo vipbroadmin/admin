@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/finances/withdrawal-requests')]
+#[Route('/finances/api/v1/withdrawal-requests')]
 final class WithdrawalController extends AbstractController
 {
     #[Route('/{id}', methods: ['GET'])]

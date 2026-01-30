@@ -22,7 +22,7 @@
 				"type": "text/javascript",
 				"exec": [
 					"const path = pm.request.url.getPath ? pm.request.url.getPath() : pm.request.url.path.join('/');",
-					"if (!path.endsWith('api/v1/users/staffs/login')) {",
+					"if (!path.endsWith('users/api/v1/staffs/login')) {",
 					"  const token = pm.collectionVariables.get('jwt') || pm.environment.get('jwt');",
 					"  if (token) {",
 					"    pm.request.headers.upsert({ key: 'Authorization', value: `Bearer ${token}` });",
@@ -60,14 +60,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/staffs/login",
+							"raw": "{{base_url}}/users/api/v1/staffs/login",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"users",
 								"api",
 								"v1",
-								"users",
 								"staffs",
 								"login"
 							]
@@ -90,14 +90,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/staffs/me",
+							"raw": "{{base_url}}/users/api/v1/staffs/me",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"users",
 								"api",
 								"v1",
-								"users",
 								"staffs",
 								"me"
 							]
@@ -117,14 +117,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/staffs/logout",
+							"raw": "{{base_url}}/users/api/v1/staffs/logout",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"users",
 								"api",
 								"v1",
-								"users",
 								"staffs",
 								"logout"
 							]
@@ -144,14 +144,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/staffs?offset=0&limit=20",
+							"raw": "{{base_url}}/users/api/v1/staffs?offset=0&limit=20",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"users",
 								"api",
 								"v1",
-								"users",
 								"staffs"
 							],
 							"query": [
@@ -193,14 +193,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/staffs",
+							"raw": "{{base_url}}/users/api/v1/staffs",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"users",
 								"api",
 								"v1",
-								"users",
 								"staffs"
 							]
 						},
@@ -219,14 +219,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/users/staffs/{{staff_user_id}}/ban",
+							"raw": "{{base_url}}/users/api/v1/staffs/{{staff_user_id}}/ban",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
+								"users",
 								"api",
 								"v1",
-								"users",
 								"staffs",
 								"{{staff_user_id}}",
 								"ban"
@@ -253,7 +253,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/players?offset=0&limit=20&sortBy=createdAt&order=desc",
+							"raw": "{{base_url}}/players/api/v1?offset=0&limit=20&sortBy=createdAt&order=desc",
 							"host": [
 								"{{base_url}}"
 							],
@@ -331,7 +331,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players",
+							"raw": "{{base_url}}/players/api/v1",
 							"host": [
 								"{{base_url}}"
 							],
@@ -356,7 +356,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -382,7 +382,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/documents",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/documents",
 							"host": [
 								"{{base_url}}"
 							],
@@ -422,7 +422,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/document/{{document_id}}",
+							"raw": "{{base_url}}/players/api/v1/document/{{document_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -462,7 +462,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/info",
+							"raw": "{{base_url}}/players/api/v1/info",
 							"host": [
 								"{{base_url}}"
 							],
@@ -501,7 +501,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -540,7 +540,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/level",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/level",
 							"host": [
 								"{{base_url}}"
 							],
@@ -567,7 +567,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/requisites",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/requisites",
 							"host": [
 								"{{base_url}}"
 							],
@@ -607,7 +607,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/requisites",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/requisites",
 							"host": [
 								"{{base_url}}"
 							],
@@ -647,7 +647,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/kick",
+							"raw": "{{base_url}}/players/api/v1/kick",
 							"host": [
 								"{{base_url}}"
 							],
@@ -686,7 +686,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/password",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/password",
 							"host": [
 								"{{base_url}}"
 							],
@@ -713,7 +713,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/ban",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/ban",
 							"host": [
 								"{{base_url}}"
 							],
@@ -740,7 +740,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/unban",
+							"raw": "{{base_url}}/players/api/v1/{{player_id}}/unban",
 							"host": [
 								"{{base_url}}"
 							],
@@ -773,7 +773,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets/by-player-id/{{player_id}}",
+							"raw": "{{base_url}}/finances/api/v1/wallets/by-player-id/{{player_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -814,7 +814,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets",
+							"raw": "{{base_url}}/finances/api/v1/wallets",
 							"host": [
 								"{{base_url}}"
 							],
@@ -853,7 +853,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets/deposit",
+							"raw": "{{base_url}}/finances/api/v1/wallets/deposit",
 							"host": [
 								"{{base_url}}"
 							],
@@ -893,7 +893,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets/cashout",
+							"raw": "{{base_url}}/finances/api/v1/wallets/cashout",
 							"host": [
 								"{{base_url}}"
 							],
@@ -933,7 +933,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets/unlock",
+							"raw": "{{base_url}}/finances/api/v1/wallets/unlock",
 							"host": [
 								"{{base_url}}"
 							],
@@ -973,7 +973,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets/confirm-withdrawal",
+							"raw": "{{base_url}}/finances/api/v1/wallets/confirm-withdrawal",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1006,7 +1006,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1046,7 +1046,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1080,7 +1080,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/take",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}/take",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1116,7 +1116,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/request-verification",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}/request-verification",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1152,7 +1152,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/approve",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}/approve",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1201,7 +1201,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/reject",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}/reject",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1237,7 +1237,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/retry",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}/retry",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1273,7 +1273,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/return",
+							"raw": "{{base_url}}/finances/api/v1/withdrawal-requests/{{withdrawal_id}}/return",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1307,7 +1307,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/reports/transactions?playerId={{player_id}}&walletId={{wallet_id}}&currency=USD&type=deposit&reason=&from=2024-01-01T00:00:00Z&to=2024-12-31T23:59:59Z&sortBy=created_at&order=desc&limit=20&offset=0",
+							"raw": "{{base_url}}/finances/api/v1/reports/transactions?playerId={{player_id}}&walletId={{wallet_id}}&currency=USD&type=deposit&reason=&from=2024-01-01T00:00:00Z&to=2024-12-31T23:59:59Z&sortBy=created_at&order=desc&limit=20&offset=0",
 							"host": [
 								"{{base_url}}"
 							],

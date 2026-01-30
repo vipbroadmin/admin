@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/finances/reports')]
+#[Route('/finances/api/v1/reports')]
 final class ReportsController extends AbstractController
 {
     #[Route('/transactions', methods: ['GET'])]

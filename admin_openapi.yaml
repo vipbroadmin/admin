@@ -20,7 +20,7 @@ tags:
   - name: Reference
   - name: Slotegrator
 paths:
-  /api/v1/users/staffs/login:
+  /users/api/v1/staffs/login:
     post:
       tags: [Auth]
       summary: Login and get JWT
@@ -42,7 +42,7 @@ paths:
         "404":
           $ref: "#/components/responses/NotFound"
       security: []
-  /api/v1/users/staffs/logout:
+  /users/api/v1/staffs/logout:
     delete:
       tags: [Auth]
       summary: Logout (stateless)
@@ -55,7 +55,7 @@ paths:
                 type: boolean
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /api/v1/users/staffs:
+  /users/api/v1/staffs:
     get:
       tags: [Auth]
       summary: List users
@@ -95,7 +95,7 @@ paths:
                 $ref: "#/components/schemas/CreateStaffUserResponse"
         "422":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/users/staffs/{id}/ban:
+  /users/api/v1/staffs/{id}/ban:
     put:
       tags: [Auth]
       summary: Block user
@@ -112,7 +112,7 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
-  /api/v1/users/staffs/me:
+  /users/api/v1/staffs/me:
     get:
       tags: [Auth]
       summary: Get current user
@@ -132,7 +132,7 @@ paths:
                       roles: []
         "401":
           $ref: "#/components/responses/Unauthorized"
-  /api/v1/players:
+  /players/api/v1:
     get:
       tags: [Players]
       summary: List players
@@ -179,7 +179,7 @@ paths:
                 $ref: "#/components/schemas/SuccessResponse"
         "422":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/players/{id}:
+  /players/api/v1/{id}:
     get:
       tags: [Players]
       summary: Get player by ID
@@ -214,7 +214,7 @@ paths:
                 $ref: "#/components/schemas/SuccessResponse"
         "404":
           $ref: "#/components/responses/NotFound"
-  /api/v1/players/info:
+  /players/api/v1/info:
     post:
       tags: [Players]
       summary: Get players info by ids
@@ -236,7 +236,7 @@ paths:
                   summary: No players found
                   value:
                     data: []
-  /api/v1/players/{id}/documents:
+  /players/api/v1/{id}/documents:
     get:
       tags: [Players]
       summary: Get player documents
@@ -254,7 +254,7 @@ paths:
                   summary: No documents
                   value:
                     documents: []
-  /api/v1/players/document/{id}:
+  /players/api/v1/document/{id}:
     patch:
       tags: [Players]
       summary: Update document status
@@ -273,7 +273,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/level:
+  /players/api/v1/{id}/level:
     put:
       tags: [Players]
       summary: Update player level
@@ -292,7 +292,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/password:
+  /players/api/v1/{id}/password:
     put:
       tags: [Players]
       summary: Update player password
@@ -311,7 +311,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/ban:
+  /players/api/v1/{id}/ban:
     put:
       tags: [Players]
       summary: Ban player
@@ -324,7 +324,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/unban:
+  /players/api/v1/{id}/unban:
     put:
       tags: [Players]
       summary: Unban player
@@ -337,7 +337,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/kick:
+  /players/api/v1/kick:
     post:
       tags: [Players]
       summary: Kick players
@@ -354,7 +354,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/requisites:
+  /players/api/v1/{id}/requisites:
     get:
       tags: [Players]
       summary: Get player requisites
@@ -391,7 +391,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/finances/wallets/by-player-id/{playerId}:
+  /finances/api/v1/wallets/by-player-id/{playerId}:
     get:
       tags: [Wallets]
       summary: Get wallets by player ID
@@ -416,7 +416,7 @@ paths:
                     wallets: []
         "404":
           $ref: "#/components/responses/NotFound"
-  /api/v1/finances/wallets:
+  /finances/api/v1/wallets:
     post:
       tags: [Wallets]
       summary: Create wallet
@@ -433,7 +433,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/wallets/deposit:
+  /finances/api/v1/wallets/deposit:
     post:
       tags: [Wallets]
       summary: Deposit to wallet
@@ -450,7 +450,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/wallets/cashout:
+  /finances/api/v1/wallets/cashout:
     post:
       tags: [Wallets]
       summary: Cashout from wallet
@@ -467,7 +467,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/wallets/unlock:
+  /finances/api/v1/wallets/unlock:
     post:
       tags: [Wallets]
       summary: Unlock wallet funds
@@ -484,7 +484,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/wallets/confirm-withdrawal:
+  /finances/api/v1/wallets/confirm-withdrawal:
     post:
       tags: [Wallets]
       summary: Confirm withdrawal
@@ -501,7 +501,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests:
+  /finances/api/v1/withdrawal-requests:
     post:
       tags: [Withdrawals]
       summary: Create withdrawal request
@@ -518,7 +518,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}:
+  /finances/api/v1/withdrawal-requests/{id}:
     get:
       tags: [Withdrawals]
       summary: Get withdrawal request
@@ -531,7 +531,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/take:
+  /finances/api/v1/withdrawal-requests/{id}/take:
     post:
       tags: [Withdrawals]
       summary: Take withdrawal request
@@ -546,7 +546,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/request-verification:
+  /finances/api/v1/withdrawal-requests/{id}/request-verification:
     post:
       tags: [Withdrawals]
       summary: Request verification
@@ -561,7 +561,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/approve:
+  /finances/api/v1/withdrawal-requests/{id}/approve:
     post:
       tags: [Withdrawals]
       summary: Approve withdrawal
@@ -576,7 +576,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/reject:
+  /finances/api/v1/withdrawal-requests/{id}/reject:
     post:
       tags: [Withdrawals]
       summary: Reject withdrawal
@@ -597,7 +597,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/retry:
+  /finances/api/v1/withdrawal-requests/{id}/retry:
     post:
       tags: [Withdrawals]
       summary: Retry withdrawal
@@ -612,7 +612,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/return:
+  /finances/api/v1/withdrawal-requests/{id}/return:
     post:
       tags: [Withdrawals]
       summary: Return withdrawal
@@ -627,7 +627,7 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/reports/transactions:
+  /finances/api/v1/reports/transactions:
     get:
       tags: [Reports]
       summary: List transactions
@@ -696,7 +696,7 @@ paths:
                     transactions: []
         "404":
           $ref: "#/components/responses/NotFound"
-  /api/v1/reference/countries:
+  /reference/api/v1/countries:
     get:
       tags: [Reference]
       summary: List countries
@@ -712,7 +712,7 @@ paths:
                   summary: No countries
                   value:
                     countries: []
-  /api/v1/reference/currencies:
+  /reference/api/v1/currencies:
     get:
       tags: [Reference]
       summary: List currencies
@@ -728,11 +728,16 @@ paths:
                   summary: No currencies
                   value:
                     currencies: []
-  /api/v1/slotegrator/providers:
+  /provider/{provider}/api/v1/providers:
     get:
       tags: [Slotegrator]
       summary: List providers
       parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
         - name: status
           in: query
           schema:
@@ -765,11 +770,16 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/slotegrator/games:
+  /provider/{provider}/api/v1/games:
     get:
       tags: [Slotegrator]
       summary: List games
       parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
         - name: provider_id
           in: query
           schema:
@@ -807,10 +817,16 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/slotegrator/launch:
+  /provider/{provider}/api/v1/launch:
     post:
       tags: [Slotegrator]
       summary: Launch game
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         required: true
         content:

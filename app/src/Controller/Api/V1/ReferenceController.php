@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/v1/reference')]
+#[Route('/reference/api/v1')]
 final class ReferenceController extends AbstractController
 {
     #[Route('/countries', methods: ['GET'])]

@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/finances/wallets')]
+#[Route('/finances/api/v1/wallets')]
 final class WalletController extends AbstractController
 {
     #[Route('/by-player-id/{playerId}', methods: ['GET'])]

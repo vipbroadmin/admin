@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/users/staffs')]
+#[Route('/users/api/v1/staffs')]
 final class AuthController extends AbstractController
 {
     #[Route('', methods: ['GET'])]
