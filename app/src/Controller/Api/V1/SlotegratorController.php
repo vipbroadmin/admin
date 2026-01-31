@@ -8,6 +8,14 @@ use App\Application\Slotegrator\GetProviders\GetProvidersHandler;
 use App\Application\Slotegrator\GetProviders\GetProvidersQuery;
 use App\Application\Slotegrator\LaunchGame\LaunchGameCommand;
 use App\Application\Slotegrator\LaunchGame\LaunchGameHandler;
+use App\Application\Slotegrator\SyncGames\SyncGamesCommand;
+use App\Application\Slotegrator\SyncGames\SyncGamesHandler;
+use App\Application\Slotegrator\SyncGamesStatus\SyncGamesStatusHandler;
+use App\Application\Slotegrator\SyncGamesStatus\SyncGamesStatusQuery;
+use App\Application\Slotegrator\SyncProviders\SyncProvidersCommand;
+use App\Application\Slotegrator\SyncProviders\SyncProvidersHandler;
+use App\Application\Slotegrator\SyncProvidersStatus\SyncProvidersStatusHandler;
+use App\Application\Slotegrator\SyncProvidersStatus\SyncProvidersStatusQuery;
 use App\Infrastructure\Http\Exception\ExternalServiceException;
 use App\Infrastructure\Http\Exception\ExternalServiceNotFoundException;
 use App\Infrastructure\Http\Exception\ExternalServiceValidationException;
@@ -60,6 +68,54 @@ final class SlotegratorController extends AbstractController
         }
     }
 
+    #[Route('/providers/sync', methods: ['POST'])]
+    public function syncProviders(
+        string $provider,
+        SyncProvidersHandler $handler
+    ): JsonResponse {
+        $this->assertProvider($provider);
+
+        $result = $handler->handle(new SyncProvidersCommand());
+        return $this->json($result, Response::HTTP_ACCEPTED);
+    }
+
+    #[Route('/providers/sync/status', methods: ['GET'])]
+    public function providersSyncStatus(
+        string $provider,
+        Request $request,
+        ValidatorInterface $validator,
+        SyncProvidersStatusHandler $handler
+    ): JsonResponse {
+        $this->assertProvider($provider);
+
+        $query = new SyncProvidersStatusQuery(
+            limit: $request->query->has('limit') ? $request->query->getInt('limit') : null,
+            offset: $request->query->has('offset') ? $request->query->getInt('offset') : null,
+        );
+
+        $errors = $validator->validate($query);
+        if (count($errors) > 0) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'details' => $this->violationsToArray($errors),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $result = $handler->handle($query);
+            return $this->json($result);
+        } catch (ExternalServiceException $e) {
+            return $this->json([
+                'error' => [
+                    'code' => 'external_service_error',
+                    'message' => $e->getMessage(),
+                ],
+            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     #[Route('/games', methods: ['GET'])]
     public function games(
         string $provider,
@@ -73,6 +129,80 @@ final class SlotegratorController extends AbstractController
             providerId: $request->query->has('provider_id') ? $request->query->getInt('provider_id') : null,
             status: $request->query->get('status'),
             search: $request->query->get('search'),
+            limit: $request->query->has('limit') ? $request->query->getInt('limit') : null,
+            offset: $request->query->has('offset') ? $request->query->getInt('offset') : null,
+        );
+
+        $errors = $validator->validate($query);
+        if (count($errors) > 0) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'details' => $this->violationsToArray($errors),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $result = $handler->handle($query);
+            return $this->json($result);
+        } catch (ExternalServiceException $e) {
+            return $this->json([
+                'error' => [
+                    'code' => 'external_service_error',
+                    'message' => $e->getMessage(),
+                ],
+            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/games/sync', methods: ['POST'])]
+    public function syncGames(
+        string $provider,
+        Request $request,
+        ValidatorInterface $validator,
+        SyncGamesHandler $handler
+    ): JsonResponse {
+        $this->assertProvider($provider);
+
+        $payload = json_decode($request->getContent() ?: '', true);
+        if ($payload !== null && !is_array($payload)) {
+            return $this->json([
+                'error' => [
+                    'code' => 'invalid_json',
+                    'message' => 'Request body must be valid JSON.',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $cmd = new SyncGamesCommand(
+            providerIds: is_array($payload) ? ($payload['provider_ids'] ?? null) : null,
+        );
+
+        $errors = $validator->validate($cmd);
+        if (count($errors) > 0) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'details' => $this->violationsToArray($errors),
+                ],
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $result = $handler->handle($cmd);
+        return $this->json($result, Response::HTTP_ACCEPTED);
+    }
+
+    #[Route('/games/sync/status', methods: ['GET'])]
+    public function gamesSyncStatus(
+        string $provider,
+        Request $request,
+        ValidatorInterface $validator,
+        SyncGamesStatusHandler $handler
+    ): JsonResponse {
+        $this->assertProvider($provider);
+
+        $query = new SyncGamesStatusQuery(
             limit: $request->query->has('limit') ? $request->query->getInt('limit') : null,
             offset: $request->query->has('offset') ? $request->query->getInt('offset') : null,
         );

@@ -25,6 +25,36 @@ final class SlotegratorServiceClient extends BaseHttpClient
     }
 
     /**
+     * POST /slotegrator/providers/sync
+     *
+     * @return array<string, mixed>
+     */
+    public function syncProviders(): array
+    {
+        $response = $this->request('POST', '/slotegrator/providers/sync');
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     * GET /slotegrator/providers/sync/status
+     *
+     * @param array{
+     *     limit?: int,
+     *     offset?: int
+     * } $query
+     * @return array<string, mixed>
+     */
+    public function getProvidersSyncStatus(array $query): array
+    {
+        $response = $this->request('GET', '/slotegrator/providers/sync/status', [
+            'query' => $query,
+        ]);
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
      * GET /slotegrator/games
      *
      * @param array{
@@ -39,6 +69,39 @@ final class SlotegratorServiceClient extends BaseHttpClient
     public function getGames(array $query): array
     {
         $response = $this->request('GET', '/slotegrator/games', [
+            'query' => $query,
+        ]);
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     * POST /slotegrator/games/sync
+     *
+     * @param array{provider_ids?: array<int, int>} $data
+     * @return array<string, mixed>
+     */
+    public function syncGames(array $data): array
+    {
+        $response = $this->request('POST', '/slotegrator/games/sync', [
+            'json' => $data,
+        ]);
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     * GET /slotegrator/games/sync/status
+     *
+     * @param array{
+     *     limit?: int,
+     *     offset?: int
+     * } $query
+     * @return array<string, mixed>
+     */
+    public function getGamesSyncStatus(array $query): array
+    {
+        $response = $this->request('GET', '/slotegrator/games/sync/status', [
             'query' => $query,
         ]);
 

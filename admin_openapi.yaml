@@ -770,6 +770,50 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
+  /api/v1/providers/{provider}/providers/sync:
+    post:
+      tags: [Slotegrator]
+      summary: Sync providers
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "202":
+          description: Sync started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorSyncResponse"
+  /api/v1/providers/{provider}/providers/sync/status:
+    get:
+      tags: [Slotegrator]
+      summary: Providers sync status
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: Sync status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorSyncStatusResponse"
   /api/v1/providers/{provider}/games:
     get:
       tags: [Slotegrator]
@@ -817,6 +861,56 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
+  /api/v1/providers/{provider}/games/sync:
+    post:
+      tags: [Slotegrator]
+      summary: Sync games
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SlotegratorGamesSyncRequest"
+      responses:
+        "202":
+          description: Sync started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorSyncResponse"
+  /api/v1/providers/{provider}/games/sync/status:
+    get:
+      tags: [Slotegrator]
+      summary: Games sync status
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: Sync status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorSyncStatusResponse"
   /api/v1/providers/{provider}/launch:
     post:
       tags: [Slotegrator]
@@ -1099,6 +1193,35 @@ components:
           type: string
         url:
           type: string
+    SlotegratorGamesSyncRequest:
+      type: object
+      properties:
+        provider_ids:
+          type: array
+          items:
+            type: integer
+          minItems: 1
+    SlotegratorSyncResponse:
+      type: object
+      properties:
+        run_id:
+          type: string
+        status:
+          type: string
+        started_at:
+          type: string
+    SlotegratorSyncStatusResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        limit:
+          type: integer
+        offset:
+          type: integer
     CreatePlayerRequest:
       type: object
       properties:

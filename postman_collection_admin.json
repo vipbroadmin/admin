@@ -1392,6 +1392,273 @@
 				}
 			],
 			"description": "Endpoints для работы с Reports Service"
+		},
+		{
+			"name": "Slotegrator",
+			"item": [
+				{
+					"name": "List Providers",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/providers?limit=20&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"providers"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Получить список провайдеров"
+					},
+					"response": []
+				},
+				{
+					"name": "Sync Providers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/providers/sync",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"providers",
+								"sync"
+							]
+						},
+						"description": "Запустить синхронизацию провайдеров"
+					},
+					"response": []
+				},
+				{
+					"name": "Providers Sync Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/providers/sync/status?limit=20&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"providers",
+								"sync",
+								"status"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Статус синхронизации провайдеров"
+					},
+					"response": []
+				},
+				{
+					"name": "List Games",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/games?limit=20&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"games"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Получить список игр"
+					},
+					"response": []
+				},
+				{
+					"name": "Sync Games",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"provider_ids\": [1, 2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/games/sync",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"games",
+								"sync"
+							]
+						},
+						"description": "Запустить синхронизацию игр"
+					},
+					"response": []
+				},
+				{
+					"name": "Games Sync Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/games/sync/status?limit=20&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"games",
+								"sync",
+								"status"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Статус синхронизации игр"
+					},
+					"response": []
+				},
+				{
+					"name": "Launch Game",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"game_uuid\": \"game-uuid\",\n  \"player_id\": \"{{player_id}}\",\n  \"player_name\": \"Player\",\n  \"currency\": \"USD\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/providers/{{provider}}/launch",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"providers",
+								"{{provider}}",
+								"launch"
+							]
+						},
+						"description": "Запустить игру"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints для Slotegrator"
 		}
 	],
 	"variable": [
@@ -1447,6 +1714,12 @@
 			"value": "pm-1",
 			"type": "string",
 			"description": "ID платежного метода"
+		},
+		{
+			"key": "provider",
+			"value": "slotegrator",
+			"type": "string",
+			"description": "Название провайдера"
 		},
 		{
 			"key": "staff_user_id",
