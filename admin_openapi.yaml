@@ -214,10 +214,10 @@ paths:
                 $ref: "#/components/schemas/SuccessResponse"
         "404":
           $ref: "#/components/responses/NotFound"
-  /api/v1/players/info:
+  /api/v1/players/search:
     post:
       tags: [Players]
-      summary: Get players info by ids
+      summary: Search players by ids
       requestBody:
         required: true
         content:
@@ -311,36 +311,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/ban:
-    put:
+  /api/v1/players/{id}/status:
+    patch:
       tags: [Players]
-      summary: Ban player
+      summary: Update player status
       parameters:
         - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlayerStatusRequest"
       responses:
         "200":
-          description: Banned
+          description: Updated
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/{id}/unban:
-    put:
-      tags: [Players]
-      summary: Unban player
-      parameters:
-        - $ref: "#/components/parameters/id"
-      responses:
-        "200":
-          description: Unbanned
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/SuccessResponse"
-  /api/v1/players/kick:
+  /api/v1/players/actions:
     post:
       tags: [Players]
-      summary: Kick players
+      summary: Execute players action
       requestBody:
         required: true
         content:
@@ -484,23 +477,6 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/wallets/confirm-withdrawal:
-    post:
-      tags: [Wallets]
-      summary: Confirm withdrawal
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ConfirmWithdrawalRequest"
-      responses:
-        "200":
-          description: Wallet updated
-          content:
-            application/json:
-              schema:
-                type: object
   /api/v1/finances/withdrawal-requests:
     post:
       tags: [Withdrawals]
@@ -531,55 +507,9 @@ paths:
             application/json:
               schema:
                 type: object
-  /api/v1/finances/withdrawal-requests/{id}/take:
-    post:
+    patch:
       tags: [Withdrawals]
-      summary: Take withdrawal request
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - $ref: "#/components/parameters/managerId"
-        - $ref: "#/components/parameters/managerRole"
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-  /api/v1/finances/withdrawal-requests/{id}/request-verification:
-    post:
-      tags: [Withdrawals]
-      summary: Request verification
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - $ref: "#/components/parameters/managerId"
-        - $ref: "#/components/parameters/managerRole"
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-  /api/v1/finances/withdrawal-requests/{id}/approve:
-    post:
-      tags: [Withdrawals]
-      summary: Approve withdrawal
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - $ref: "#/components/parameters/managerId"
-        - $ref: "#/components/parameters/managerRole"
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-  /api/v1/finances/withdrawal-requests/{id}/reject:
-    post:
-      tags: [Withdrawals]
-      summary: Reject withdrawal
+      summary: Update withdrawal status
       parameters:
         - $ref: "#/components/parameters/id"
         - $ref: "#/components/parameters/managerId"
@@ -589,37 +519,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RejectWithdrawalRequest"
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-  /api/v1/finances/withdrawal-requests/{id}/retry:
-    post:
-      tags: [Withdrawals]
-      summary: Retry withdrawal
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - $ref: "#/components/parameters/managerId"
-        - $ref: "#/components/parameters/managerRole"
-      responses:
-        "200":
-          description: Updated
-          content:
-            application/json:
-              schema:
-                type: object
-  /api/v1/finances/withdrawal-requests/{id}/return:
-    post:
-      tags: [Withdrawals]
-      summary: Return withdrawal
-      parameters:
-        - $ref: "#/components/parameters/id"
-        - $ref: "#/components/parameters/managerId"
-        - $ref: "#/components/parameters/managerRole"
+              $ref: "#/components/schemas/WithdrawalStatusRequest"
       responses:
         "200":
           description: Updated
@@ -1170,6 +1070,13 @@ components:
         status:
           type: string
       required: [status]
+    PlayerStatusRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [banned, active]
+      required: [status]
     PlayerRequisitesRequest:
       type: object
       properties:
@@ -1180,12 +1087,19 @@ components:
           type: object
           nullable: true
     KickPlayersRequest:
-      type: array
-      minItems: 0
-      default: []
-      items:
-        type: string
-        format: uuid
+      type: object
+      properties:
+        action:
+          type: string
+          enum: [kick]
+        ids:
+          type: array
+          minItems: 0
+          default: []
+          items:
+            type: string
+            format: uuid
+      required: [action, ids]
     SuccessResponse:
       type: object
       properties:
@@ -1264,12 +1178,15 @@ components:
         paymentSystemId:
           type: string
       required: [playerId, walletId, currency, amount, paymentSystemId]
-    RejectWithdrawalRequest:
+    WithdrawalStatusRequest:
       type: object
       properties:
+        status:
+          type: string
+          enum: [taken, verification_requested, approved, rejected, retry, returned, confirmed]
         reason:
           type: string
-      required: [reason]
+      required: [status]
     ErrorResponse:
       type: object
       properties:

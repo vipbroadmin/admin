@@ -9,6 +9,7 @@ use App\Application\Withdrawal\RejectWithdrawal\RejectWithdrawalCommand;
 use App\Infrastructure\Http\Exception\ExternalServiceException;
 use App\Infrastructure\Http\Exception\ExternalServiceNotFoundException;
 use App\Infrastructure\Http\Exception\ExternalServiceValidationException;
+use App\Infrastructure\Http\WalletsServiceClient;
 use App\Infrastructure\Http\WithdrawalsServiceClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -118,209 +119,101 @@ final class WithdrawalController extends AbstractController
         }
     }
 
-    #[Route('/{id}/take', methods: ['POST'])]
-    public function take(
+    #[Route('/{id}', methods: ['PATCH'])]
+    public function updateStatus(
         string $id,
         Request $request,
         ValidatorInterface $validator,
-        WithdrawalsServiceClient $client
-    ): JsonResponse {
-        $cmd = $this->buildManagerCommand($id, $request);
-        $errors = $validator->validate($cmd);
-        if (count($errors) > 0) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'details' => $this->violationsToArray($errors),
-                ],
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $result = $client->take($cmd->id, $cmd->managerId, $cmd->managerRole);
-            return $this->json($result);
-        } catch (ExternalServiceValidationException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (ExternalServiceNotFoundException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'not_found',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        } catch (ExternalServiceException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'external_service_error',
-                    'message' => $e->getMessage(),
-                ],
-            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    #[Route('/{id}/request-verification', methods: ['POST'])]
-    public function requestVerification(
-        string $id,
-        Request $request,
-        ValidatorInterface $validator,
-        WithdrawalsServiceClient $client
-    ): JsonResponse {
-        $cmd = $this->buildManagerCommand($id, $request);
-        $errors = $validator->validate($cmd);
-        if (count($errors) > 0) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'details' => $this->violationsToArray($errors),
-                ],
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $result = $client->requestVerification($cmd->id, $cmd->managerId, $cmd->managerRole);
-            return $this->json($result);
-        } catch (ExternalServiceValidationException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (ExternalServiceNotFoundException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'not_found',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        } catch (ExternalServiceException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'external_service_error',
-                    'message' => $e->getMessage(),
-                ],
-            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    #[Route('/{id}/approve', methods: ['POST'])]
-    public function approve(
-        string $id,
-        Request $request,
-        ValidatorInterface $validator,
-        WithdrawalsServiceClient $client
-    ): JsonResponse {
-        $cmd = $this->buildManagerCommand($id, $request);
-        $errors = $validator->validate($cmd);
-        if (count($errors) > 0) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'details' => $this->violationsToArray($errors),
-                ],
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $result = $client->approve($cmd->id, $cmd->managerId, $cmd->managerRole);
-            return $this->json($result);
-        } catch (ExternalServiceValidationException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (ExternalServiceNotFoundException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'not_found',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        } catch (ExternalServiceException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'external_service_error',
-                    'message' => $e->getMessage(),
-                ],
-            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    #[Route('/{id}/reject', methods: ['POST'])]
-    public function reject(
-        string $id,
-        Request $request,
-        ValidatorInterface $validator,
-        WithdrawalsServiceClient $client
+        WithdrawalsServiceClient $client,
+        WalletsServiceClient $walletsClient
     ): JsonResponse {
         $payload = json_decode($request->getContent() ?: '', true);
-        if (!is_array($payload)) {
+        if (!is_array($payload) || !isset($payload['status'])) {
             return $this->json([
                 'error' => [
                     'code' => 'invalid_json',
-                    'message' => 'Request body must be valid JSON.',
+                    'message' => 'Request body must contain "status" field.',
                 ],
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $cmd = new RejectWithdrawalCommand(
-            id: $id,
-            managerId: (string)$request->headers->get('X-Manager-Id', ''),
-            managerRole: (string)$request->headers->get('X-Manager-Role', ''),
-            reason: (string)($payload['reason'] ?? ''),
-        );
-
-        $errors = $validator->validate($cmd);
-        if (count($errors) > 0) {
+        $status = (string)$payload['status'];
+        $allowed = ['taken', 'verification_requested', 'approved', 'rejected', 'retry', 'returned', 'confirmed'];
+        if (!in_array($status, $allowed, true)) {
             return $this->json([
                 'error' => [
                     'code' => 'validation_failed',
-                    'details' => $this->violationsToArray($errors),
+                    'message' => 'Unsupported status value.',
                 ],
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        try {
-            $result = $client->reject($cmd->id, $cmd->managerId, $cmd->managerRole, $cmd->reason);
-            return $this->json($result);
-        } catch (ExternalServiceValidationException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (ExternalServiceNotFoundException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'not_found',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        } catch (ExternalServiceException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'external_service_error',
-                    'message' => $e->getMessage(),
-                ],
-            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        if ($status === 'confirmed') {
+            try {
+                $result = $walletsClient->confirmWithdrawal(['withdrawalRequestId' => $id]);
+                return $this->json($result);
+            } catch (ExternalServiceNotFoundException $e) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'not_found',
+                        'message' => $e->getMessage(),
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            } catch (ExternalServiceException $e) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'external_service_error',
+                        'message' => $e->getMessage(),
+                    ],
+                ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
-    }
 
-    #[Route('/{id}/retry', methods: ['POST'])]
-    public function retry(
-        string $id,
-        Request $request,
-        ValidatorInterface $validator,
-        WithdrawalsServiceClient $client
-    ): JsonResponse {
+        if ($status === 'rejected') {
+            $cmd = new RejectWithdrawalCommand(
+                id: $id,
+                managerId: (string)$request->headers->get('X-Manager-Id', ''),
+                managerRole: (string)$request->headers->get('X-Manager-Role', ''),
+                reason: (string)($payload['reason'] ?? ''),
+            );
+
+            $errors = $validator->validate($cmd);
+            if (count($errors) > 0) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'validation_failed',
+                        'details' => $this->violationsToArray($errors),
+                    ],
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            try {
+                $result = $client->reject($cmd->id, $cmd->managerId, $cmd->managerRole, $cmd->reason);
+                return $this->json($result);
+            } catch (ExternalServiceValidationException $e) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'validation_failed',
+                        'message' => $e->getMessage(),
+                    ],
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            } catch (ExternalServiceNotFoundException $e) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'not_found',
+                        'message' => $e->getMessage(),
+                    ],
+                ], Response::HTTP_NOT_FOUND);
+            } catch (ExternalServiceException $e) {
+                return $this->json([
+                    'error' => [
+                        'code' => 'external_service_error',
+                        'message' => $e->getMessage(),
+                    ],
+                ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
         $cmd = $this->buildManagerCommand($id, $request);
         $errors = $validator->validate($cmd);
         if (count($errors) > 0) {
@@ -333,52 +226,14 @@ final class WithdrawalController extends AbstractController
         }
 
         try {
-            $result = $client->retry($cmd->id, $cmd->managerId, $cmd->managerRole);
-            return $this->json($result);
-        } catch (ExternalServiceValidationException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        } catch (ExternalServiceNotFoundException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'not_found',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        } catch (ExternalServiceException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'external_service_error',
-                    'message' => $e->getMessage(),
-                ],
-            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    #[Route('/{id}/return', methods: ['POST'])]
-    public function returnRequest(
-        string $id,
-        Request $request,
-        ValidatorInterface $validator,
-        WithdrawalsServiceClient $client
-    ): JsonResponse {
-        $cmd = $this->buildManagerCommand($id, $request);
-        $errors = $validator->validate($cmd);
-        if (count($errors) > 0) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'details' => $this->violationsToArray($errors),
-                ],
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $result = $client->returnRequest($cmd->id, $cmd->managerId, $cmd->managerRole);
+            $result = match ($status) {
+                'taken' => $client->take($cmd->id, $cmd->managerId, $cmd->managerRole),
+                'verification_requested' => $client->requestVerification($cmd->id, $cmd->managerId, $cmd->managerRole),
+                'approved' => $client->approve($cmd->id, $cmd->managerId, $cmd->managerRole),
+                'retry' => $client->retry($cmd->id, $cmd->managerId, $cmd->managerRole),
+                'returned' => $client->returnRequest($cmd->id, $cmd->managerId, $cmd->managerRole),
+                default => null,
+            };
             return $this->json($result);
         } catch (ExternalServiceValidationException $e) {
             return $this->json([

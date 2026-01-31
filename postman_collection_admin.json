@@ -462,7 +462,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/info",
+							"raw": "{{base_url}}/api/v1/players/search",
 							"host": [
 								"{{base_url}}"
 							],
@@ -470,7 +470,7 @@
 								"api",
 								"v1",
 								"players",
-								"info"
+								"search"
 							]
 						},
 						"description": "Получить информацию о нескольких игроках по массиву ID"
@@ -639,7 +639,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "[\n  \"{{player_id}}\"\n]",
+							"raw": "{\n  \"action\": \"kick\",\n  \"ids\": [\"{{player_id}}\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -647,7 +647,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/kick",
+							"raw": "{{base_url}}/api/v1/players/actions",
 							"host": [
 								"{{base_url}}"
 							],
@@ -655,10 +655,10 @@
 								"api",
 								"v1",
 								"players",
-								"kick"
+								"actions"
 							]
 						},
-						"description": "Принудительный выход игроков"
+						"description": "Выполнить действие над игроками"
 					},
 					"response": []
 				},
@@ -705,15 +705,28 @@
 				{
 					"name": "Ban Player",
 					"request": {
-						"method": "PUT",
+						"method": "PATCH",
 						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
 							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"banned\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/ban",
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/status",
 							"host": [
 								"{{base_url}}"
 							],
@@ -722,7 +735,7 @@
 								"v1",
 								"players",
 								"{{player_id}}",
-								"ban"
+								"status"
 							]
 						},
 						"description": "Заблокировать игрока"
@@ -732,15 +745,28 @@
 				{
 					"name": "Unban Player",
 					"request": {
-						"method": "PUT",
+						"method": "PATCH",
 						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
 							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"active\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/players/{{player_id}}/unban",
+							"raw": "{{base_url}}/api/v1/players/{{player_id}}/status",
 							"host": [
 								"{{base_url}}"
 							],
@@ -749,7 +775,7 @@
 								"v1",
 								"players",
 								"{{player_id}}",
-								"unban"
+								"status"
 							]
 						},
 						"description": "Разблокировать игрока"
@@ -949,46 +975,6 @@
 					},
 					"response": []
 				},
-				{
-					"name": "Confirm Withdrawal",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"withdrawalRequestId\": \"{{withdrawal_id}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/api/v1/finances/wallets/confirm-withdrawal",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"api",
-								"v1",
-								"finances",
-								"wallets",
-								"confirm-withdrawal"
-							]
-						},
-						"description": "Подтвердить вывод средств"
-					},
-					"response": []
-				}
 			],
 			"description": "Endpoints для работы с Wallets Service"
 		},
@@ -1064,7 +1050,7 @@
 				{
 					"name": "Take Withdrawal",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Manager-Id",
@@ -1075,12 +1061,25 @@
 								"value": "{{manager_role}}"
 							},
 							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"taken\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/take",
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1089,8 +1088,7 @@
 								"v1",
 								"finances",
 								"withdrawal-requests",
-								"{{withdrawal_id}}",
-								"take"
+								"{{withdrawal_id}}"
 							]
 						},
 						"description": "Взять заявку в работу"
@@ -1100,7 +1098,7 @@
 				{
 					"name": "Request Verification",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Manager-Id",
@@ -1111,12 +1109,25 @@
 								"value": "{{manager_role}}"
 							},
 							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"verification_requested\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/request-verification",
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1125,8 +1136,7 @@
 								"v1",
 								"finances",
 								"withdrawal-requests",
-								"{{withdrawal_id}}",
-								"request-verification"
+								"{{withdrawal_id}}"
 							]
 						},
 						"description": "Запросить верификацию"
@@ -1136,7 +1146,7 @@
 				{
 					"name": "Approve Withdrawal",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Manager-Id",
@@ -1147,12 +1157,25 @@
 								"value": "{{manager_role}}"
 							},
 							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"approved\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/approve",
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1161,8 +1184,7 @@
 								"v1",
 								"finances",
 								"withdrawal-requests",
-								"{{withdrawal_id}}",
-								"approve"
+								"{{withdrawal_id}}"
 							]
 						},
 						"description": "Одобрить заявку"
@@ -1172,7 +1194,7 @@
 				{
 					"name": "Reject Withdrawal",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -1193,7 +1215,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"reason\": \"KYC failed\"\n}",
+							"raw": "{\n  \"status\": \"rejected\",\n  \"reason\": \"KYC failed\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1201,7 +1223,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/reject",
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1210,8 +1232,7 @@
 								"v1",
 								"finances",
 								"withdrawal-requests",
-								"{{withdrawal_id}}",
-								"reject"
+								"{{withdrawal_id}}"
 							]
 						},
 						"description": "Отклонить заявку"
@@ -1221,7 +1242,7 @@
 				{
 					"name": "Retry Withdrawal",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Manager-Id",
@@ -1232,12 +1253,25 @@
 								"value": "{{manager_role}}"
 							},
 							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"retry\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/retry",
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1246,8 +1280,7 @@
 								"v1",
 								"finances",
 								"withdrawal-requests",
-								"{{withdrawal_id}}",
-								"retry"
+								"{{withdrawal_id}}"
 							]
 						},
 						"description": "Повторить выплату"
@@ -1257,7 +1290,7 @@
 				{
 					"name": "Return Withdrawal",
 					"request": {
-						"method": "POST",
+						"method": "PATCH",
 						"header": [
 							{
 								"key": "X-Manager-Id",
@@ -1268,12 +1301,25 @@
 								"value": "{{manager_role}}"
 							},
 							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
 								"key": "Accept",
 								"value": "application/json"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"returned\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}/return",
+							"raw": "{{base_url}}/api/v1/finances/withdrawal-requests/{{withdrawal_id}}",
 							"host": [
 								"{{base_url}}"
 							],
@@ -1282,8 +1328,7 @@
 								"v1",
 								"finances",
 								"withdrawal-requests",
-								"{{withdrawal_id}}",
-								"return"
+								"{{withdrawal_id}}"
 							]
 						},
 						"description": "Вернуть заявку"

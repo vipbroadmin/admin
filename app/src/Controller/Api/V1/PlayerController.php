@@ -2,10 +2,10 @@
 
 namespace App\Controller\Api\V1;
 
-use App\Application\Player\BanPlayer\BanPlayerCommand;
-use App\Application\Player\BanPlayer\BanPlayerHandler;
 use App\Application\Player\CreatePlayer\CreatePlayerCommand;
 use App\Application\Player\CreatePlayer\CreatePlayerHandler;
+use App\Application\Player\BanPlayer\BanPlayerCommand;
+use App\Application\Player\BanPlayer\BanPlayerHandler;
 use App\Application\Player\GetPlayer\GetPlayerHandler;
 use App\Application\Player\GetPlayer\GetPlayerQuery;
 use App\Application\Player\GetPlayerDocuments\GetPlayerDocumentsHandler;
@@ -279,8 +279,8 @@ final class PlayerController extends AbstractController
         }
     }
 
-    #[Route('/info', methods: ['POST'])]
-    public function getInfo(
+    #[Route('/search', methods: ['POST'])]
+    public function search(
         Request $request,
         ValidatorInterface $validator,
         GetPlayersInfoHandler $handler
@@ -323,8 +323,8 @@ final class PlayerController extends AbstractController
         }
     }
 
-    #[Route('/kick', methods: ['POST'])]
-    public function kick(
+    #[Route('/actions', methods: ['POST'])]
+    public function actions(
         Request $request,
         ValidatorInterface $validator,
         KickPlayersHandler $handler
@@ -335,12 +335,21 @@ final class PlayerController extends AbstractController
             return $this->json([
                 'error' => [
                     'code' => 'invalid_json',
-                    'message' => 'Request body must be valid JSON array.',
+                    'message' => 'Request body must be valid JSON.',
                 ],
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $cmd = new KickPlayersCommand(ids: $payload);
+        if (($payload['action'] ?? null) !== 'kick' || !isset($payload['ids']) || !is_array($payload['ids'])) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'message' => 'Request body must contain action="kick" and ids array.',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $cmd = new KickPlayersCommand(ids: $payload['ids']);
 
         $errors = $validator->validate($cmd);
         if (count($errors) > 0) {
@@ -621,14 +630,35 @@ final class PlayerController extends AbstractController
         }
     }
 
-    #[Route('/{id}/ban', methods: ['PUT'])]
-    public function ban(
+    #[Route('/{id}/status', methods: ['PATCH'])]
+    public function updateStatus(
         string $id,
+        Request $request,
         ValidatorInterface $validator,
-        BanPlayerHandler $handler
+        BanPlayerHandler $banHandler,
+        UnbanPlayerHandler $unbanHandler
     ): JsonResponse {
-        $cmd = new BanPlayerCommand(id: $id);
+        $payload = json_decode($request->getContent() ?: '', true);
+        if (!is_array($payload) || !isset($payload['status'])) {
+            return $this->json([
+                'error' => [
+                    'code' => 'invalid_json',
+                    'message' => 'Request body must contain "status" field.',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
 
+        $status = (string)$payload['status'];
+        if (!in_array($status, ['banned', 'active'], true)) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'message' => 'Status must be "banned" or "active".',
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $cmd = $status === 'banned' ? new BanPlayerCommand(id: $id) : new UnbanPlayerCommand(id: $id);
         $errors = $validator->validate($cmd);
         if (count($errors) > 0) {
             return $this->json([
@@ -640,45 +670,11 @@ final class PlayerController extends AbstractController
         }
 
         try {
-            $handler->handle($cmd);
-            return $this->json(['success' => true]);
-        } catch (ExternalServiceNotFoundException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'not_found',
-                    'message' => $e->getMessage(),
-                ],
-            ], Response::HTTP_NOT_FOUND);
-        } catch (ExternalServiceException $e) {
-            return $this->json([
-                'error' => [
-                    'code' => 'external_service_error',
-                    'message' => $e->getMessage(),
-                ],
-            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    #[Route('/{id}/unban', methods: ['PUT'])]
-    public function unban(
-        string $id,
-        ValidatorInterface $validator,
-        UnbanPlayerHandler $handler
-    ): JsonResponse {
-        $cmd = new UnbanPlayerCommand(id: $id);
-
-        $errors = $validator->validate($cmd);
-        if (count($errors) > 0) {
-            return $this->json([
-                'error' => [
-                    'code' => 'validation_failed',
-                    'details' => $this->violationsToArray($errors),
-                ],
-            ], Response::HTTP_BAD_REQUEST);
-        }
-
-        try {
-            $handler->handle($cmd);
+            if ($status === 'banned') {
+                $banHandler->handle($cmd);
+            } else {
+                $unbanHandler->handle($cmd);
+            }
             return $this->json(['success' => true]);
         } catch (ExternalServiceNotFoundException $e) {
             return $this->json([
