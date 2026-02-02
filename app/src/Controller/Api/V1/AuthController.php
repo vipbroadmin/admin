@@ -163,6 +163,38 @@ final class AuthController extends AbstractController
         return $this->json(['success' => true]);
     }
 
+    #[Route('/{id}/unban', methods: ['PUT'])]
+    public function unban(
+        int                $id,
+        ValidatorInterface $validator,
+        BlockUserHandler   $handler
+    ): JsonResponse
+    {
+        $cmd = new BlockUserCommand(id: $id, blocked: false);
+
+        $errors = $validator->validate($cmd);
+        if (count($errors) > 0) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'details' => $this->violationsToArray($errors),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        $ok = $handler->handle($cmd);
+        if (!$ok) {
+            return $this->json([
+                'error' => [
+                    'code' => 'not_found',
+                    'message' => 'User not found',
+                ],
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        return $this->json(['success' => true]);
+    }
+
     /**
      * @param ConstraintViolationListInterface $violations
      * @return array<int, array{field: string, message: string}>

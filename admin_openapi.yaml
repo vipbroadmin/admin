@@ -112,6 +112,23 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+  /api/v1/users/staffs/{id}/unban:
+    put:
+      tags: [Auth]
+      summary: Unblock user
+      parameters:
+        - $ref: "#/components/parameters/idInt"
+      responses:
+        "200":
+          description: Unblocked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/users/staffs/me:
     get:
       tags: [Auth]
