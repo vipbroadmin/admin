@@ -62,6 +62,10 @@ services:
             $baseUrl: '%slotegrator_service.url%'
             $timeout: '%slotegrator_service.timeout%'
 
+    App\Controller\ProviderCallbackController:
+        arguments:
+            $slotegratorBaseUrl: '%slotegrator_service.url%'
+
     App\EventSubscriber\ExceptionSubscriber:
         arguments:
             $kernelDebug: '%kernel.debug%'

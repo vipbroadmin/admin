@@ -341,6 +341,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/players/{id}/unban:
     put:
       tags: [Players]
@@ -354,6 +358,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SuccessResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/players/kick:
     post:
       tags: [Players]
@@ -518,6 +526,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests:
     post:
       tags: [Withdrawals]
@@ -548,6 +562,8 @@ paths:
             application/json:
               schema:
                 type: object
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/finances/withdrawal-requests/{id}/take:
     post:
       tags: [Withdrawals]
@@ -563,6 +579,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests/{id}/request-verification:
     post:
       tags: [Withdrawals]
@@ -578,6 +600,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests/{id}/approve:
     post:
       tags: [Withdrawals]
@@ -593,6 +621,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests/{id}/reject:
     post:
       tags: [Withdrawals]
@@ -614,6 +648,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests/{id}/retry:
     post:
       tags: [Withdrawals]
@@ -629,6 +669,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests/{id}/return:
     post:
       tags: [Withdrawals]
@@ -644,6 +690,12 @@ paths:
             application/json:
               schema:
                 type: object
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "422":
+          $ref: "#/components/responses/ValidationError"
   /api/v1/finances/reports/transactions:
     get:
       tags: [Reports]
@@ -878,6 +930,42 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
+  /api/v1/providers/{provider}/games/{game_uuid}/lobby:
+    get:
+      tags: [Slotegrator]
+      summary: Get lobby tables for a game
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: game_uuid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: currency
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: technology
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Lobby list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SlotegratorGameLobbyResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "404":
+          $ref: "#/components/responses/NotFound"
   /api/v1/providers/{provider}/games/sync:
     post:
       tags: [Slotegrator]
@@ -1173,6 +1261,14 @@ components:
           type: array
           minItems: 0
           default: []
+          items:
+            type: object
+            additionalProperties: true
+    SlotegratorGameLobbyResponse:
+      type: object
+      properties:
+        items:
+          type: array
           items:
             type: object
             additionalProperties: true

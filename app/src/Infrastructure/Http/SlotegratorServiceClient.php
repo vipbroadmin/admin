@@ -76,6 +76,24 @@ final class SlotegratorServiceClient extends BaseHttpClient
     }
 
     /**
+     * GET /slotegrator/games/{game_uuid}/lobby
+     *
+     * @return array{items: array<int, array<string, mixed>>}
+     */
+    public function getLobby(string $gameUuid, string $currency, ?string $technology = null): array
+    {
+        $query = ['currency' => $currency];
+        if ($technology !== null && $technology !== '') {
+            $query['technology'] = $technology;
+        }
+        $response = $this->request('GET', '/slotegrator/games/' . $gameUuid . '/lobby', [
+            'query' => $query,
+        ]);
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
      * POST /slotegrator/games/sync
      *
      * @param array{provider_ids?: array<int, int>} $data

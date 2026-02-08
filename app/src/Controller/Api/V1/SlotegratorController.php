@@ -2,6 +2,8 @@
 
 namespace App\Controller\Api\V1;
 
+use App\Application\Slotegrator\GetGameLobby\GetGameLobbyHandler;
+use App\Application\Slotegrator\GetGameLobby\GetGameLobbyQuery;
 use App\Application\Slotegrator\GetGames\GetGamesHandler;
 use App\Application\Slotegrator\GetGames\GetGamesQuery;
 use App\Application\Slotegrator\GetProviders\GetProvidersHandler;
@@ -205,6 +207,48 @@ final class SlotegratorController extends AbstractController
         $query = new SyncGamesStatusQuery(
             limit: $request->query->has('limit') ? $request->query->getInt('limit') : null,
             offset: $request->query->has('offset') ? $request->query->getInt('offset') : null,
+        );
+
+        $errors = $validator->validate($query);
+        if (count($errors) > 0) {
+            return $this->json([
+                'error' => [
+                    'code' => 'validation_failed',
+                    'details' => $this->violationsToArray($errors),
+                ],
+            ], Response::HTTP_BAD_REQUEST);
+        }
+
+        try {
+            $result = $handler->handle($query);
+            return $this->json($result);
+        } catch (ExternalServiceException $e) {
+            return $this->json([
+                'error' => [
+                    'code' => 'external_service_error',
+                    'message' => $e->getMessage(),
+                ],
+            ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    #[Route('/games/{game_uuid}/lobby', methods: ['GET'])]
+    public function gameLobby(
+        string $provider,
+        string $game_uuid,
+        Request $request,
+        ValidatorInterface $validator,
+        GetGameLobbyHandler $handler
+    ): JsonResponse {
+        $this->assertProvider($provider);
+
+        $currency = $request->query->get('currency');
+        $technology = $request->query->get('technology');
+
+        $query = new GetGameLobbyQuery(
+            gameUuid: $game_uuid,
+            currency: $currency !== null ? (string) $currency : '',
+            technology: $technology !== null && $technology !== '' ? (string) $technology : null,
         );
 
         $errors = $validator->validate($query);

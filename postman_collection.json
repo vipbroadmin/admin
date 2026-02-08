@@ -235,6 +235,34 @@
 						"description": "Заблокировать пользователя"
 					},
 					"response": []
+				},
+				{
+					"name": "Unban User",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/users/staffs/{{staff_user_id}}/unban",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"staffs",
+								"{{staff_user_id}}",
+								"unban"
+							]
+						},
+						"description": "Разблокировать пользователя"
+					},
+					"response": []
 				}
 			],
 			"description": "JWT авторизация"
@@ -1659,6 +1687,64 @@
 				}
 			],
 			"description": "Endpoints для Slotegrator"
+		},
+		{
+			"name": "Reference",
+			"item": [
+				{
+					"name": "List Countries",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reference/countries",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reference",
+								"countries"
+							]
+						},
+						"description": "Список стран"
+					},
+					"response": []
+				},
+				{
+					"name": "List Currencies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/reference/currencies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reference",
+								"currencies"
+							]
+						},
+						"description": "Список валют"
+					},
+					"response": []
+				}
+			],
+			"description": "Справочники (страны, валюты)"
 		}
 	],
 	"variable": [
