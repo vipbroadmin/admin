@@ -28,15 +28,18 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/v1/game-aggregator')]
+#[Route('/api/v1/game-aggregator/{provider}')]
 final class SlotegratorController extends AbstractController
 {
     #[Route('/providers', methods: ['GET'])]
     public function providers(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         GetProvidersHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $query = new GetProvidersQuery(
             status: $request->query->get('status'),
             search: $request->query->get('search'),
@@ -68,18 +71,23 @@ final class SlotegratorController extends AbstractController
     }
 
     #[Route('/providers/sync', methods: ['POST'])]
-    public function syncProviders(SyncProvidersHandler $handler): JsonResponse
+    public function syncProviders(string $provider, SyncProvidersHandler $handler): JsonResponse
     {
+        $this->assertProvider($provider);
+
         $result = $handler->handle(new SyncProvidersCommand());
         return $this->json($result, Response::HTTP_ACCEPTED);
     }
 
     #[Route('/providers/sync/status', methods: ['GET'])]
     public function providersSyncStatus(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         SyncProvidersStatusHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $query = new SyncProvidersStatusQuery(
             limit: $request->query->has('limit') ? $request->query->getInt('limit') : null,
             offset: $request->query->has('offset') ? $request->query->getInt('offset') : null,
@@ -110,10 +118,13 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/games', methods: ['GET'])]
     public function games(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         GetGamesHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $query = new GetGamesQuery(
             providerId: $request->query->has('provider_id') ? $request->query->getInt('provider_id') : null,
             status: $request->query->get('status'),
@@ -147,10 +158,13 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/games/sync', methods: ['POST'])]
     public function syncGames(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         SyncGamesHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $payload = json_decode($request->getContent() ?: '', true);
         if ($payload !== null && !is_array($payload)) {
             return $this->json([
@@ -181,10 +195,13 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/games/sync/status', methods: ['GET'])]
     public function gamesSyncStatus(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         SyncGamesStatusHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $query = new SyncGamesStatusQuery(
             limit: $request->query->has('limit') ? $request->query->getInt('limit') : null,
             offset: $request->query->has('offset') ? $request->query->getInt('offset') : null,
@@ -215,11 +232,14 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/games/{game_uuid}/lobby', methods: ['GET'])]
     public function gameLobby(
+        string $provider,
         string $game_uuid,
         Request $request,
         ValidatorInterface $validator,
         GetGameLobbyHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $currency = $request->query->get('currency');
         $technology = $request->query->get('technology');
 
@@ -254,10 +274,13 @@ final class SlotegratorController extends AbstractController
 
     #[Route('/launch', methods: ['POST'])]
     public function launch(
+        string $provider,
         Request $request,
         ValidatorInterface $validator,
         LaunchGameHandler $handler
     ): JsonResponse {
+        $this->assertProvider($provider);
+
         $payload = json_decode($request->getContent() ?: '', true);
         if (!is_array($payload)) {
             return $this->json([
@@ -316,6 +339,13 @@ final class SlotegratorController extends AbstractController
                     'message' => $e->getMessage(),
                 ],
             ], $e->getStatusCode() ?: Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private function assertProvider(string $provider): void
+    {
+        if ($provider !== 'slotegrator') {
+            throw $this->createNotFoundException('Provider not found');
         }
     }
 
