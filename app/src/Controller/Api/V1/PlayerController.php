@@ -335,12 +335,13 @@ final class PlayerController extends AbstractController
             return $this->json([
                 'error' => [
                     'code' => 'invalid_json',
-                    'message' => 'Request body must be valid JSON array.',
+                    'message' => 'Request body must be valid JSON.',
                 ],
             ], Response::HTTP_BAD_REQUEST);
         }
 
-        $cmd = new KickPlayersCommand(ids: $payload);
+        $ids = $payload['playerIds'] ?? $payload['ids'] ?? [];
+        $cmd = new KickPlayersCommand(ids: is_array($ids) ? $ids : []);
 
         $errors = $validator->validate($cmd);
         if (count($errors) > 0) {

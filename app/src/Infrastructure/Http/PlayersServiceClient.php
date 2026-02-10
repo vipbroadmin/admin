@@ -199,7 +199,7 @@ final class PlayersServiceClient extends BaseHttpClient
     public function kickPlayers(array $ids): bool
     {
         $response = $this->request('POST', '/users/players/kick', [
-            'json' => $ids,
+            'json' => ['playerIds' => $ids],
         ]);
         $result = $this->decodeResponse($response);
         return $result['success'] ?? true;

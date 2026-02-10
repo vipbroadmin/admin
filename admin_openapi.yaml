@@ -1416,12 +1416,14 @@ components:
           type: object
           nullable: true
     KickPlayersRequest:
-      type: array
-      minItems: 0
-      default: []
-      items:
-        type: string
-        format: uuid
+      type: object
+      properties:
+        playerIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required: [playerIds]
     SuccessResponse:
       type: object
       properties:
