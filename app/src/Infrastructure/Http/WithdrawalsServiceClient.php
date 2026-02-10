@@ -12,9 +12,10 @@ final class WithdrawalsServiceClient extends BaseHttpClient
      */
     public function listWithdrawalRequests(array $queryParams = []): array
     {
-        $queryString = http_build_query(array_filter($queryParams, fn($v) => $v !== null && $v !== ''));
-        $endpoint = '/finances/withdrawal-requests' . ($queryString !== '' ? '?' . $queryString : '');
-        $response = $this->request('GET', $endpoint);
+        $queryParams = array_filter($queryParams, fn($v) => $v !== null && $v !== '');
+        $response = $this->request('GET', '/finances/withdrawal-requests', [
+            'query' => $queryParams,
+        ]);
         return $this->decodeResponse($response);
     }
 
@@ -127,9 +128,10 @@ final class WithdrawalsServiceClient extends BaseHttpClient
      */
     public function listDepositRequests(array $queryParams = []): array
     {
-        $queryString = http_build_query(array_filter($queryParams, fn($v) => $v !== null && $v !== ''));
-        $endpoint = '/finances/deposit-requests' . ($queryString !== '' ? '?' . $queryString : '');
-        $response = $this->request('GET', $endpoint);
+        $queryParams = array_filter($queryParams, fn($v) => $v !== null && $v !== '');
+        $response = $this->request('GET', '/finances/deposit-requests', [
+            'query' => $queryParams,
+        ]);
         return $this->decodeResponse($response);
     }
 
