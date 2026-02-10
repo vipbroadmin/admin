@@ -866,16 +866,11 @@ paths:
                   summary: No currencies
                   value:
                     currencies: []
-  /api/v1/providers/{provider}/providers:
+  /api/v1/game-aggregator/providers:
     get:
       tags: [Slotegrator]
       summary: List providers
       parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
         - name: status
           in: query
           schema:
@@ -908,16 +903,10 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/providers/{provider}/providers/sync:
+  /api/v1/game-aggregator/providers/sync:
     post:
       tags: [Slotegrator]
       summary: Sync providers
-      parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
       responses:
         "202":
           description: Sync started
@@ -925,16 +914,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SlotegratorSyncResponse"
-  /api/v1/providers/{provider}/providers/sync/status:
+  /api/v1/game-aggregator/providers/sync/status:
     get:
       tags: [Slotegrator]
       summary: Providers sync status
       parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
         - name: limit
           in: query
           schema:
@@ -952,16 +936,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SlotegratorSyncStatusResponse"
-  /api/v1/providers/{provider}/games:
+  /api/v1/game-aggregator/games:
     get:
       tags: [Slotegrator]
       summary: List games
       parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
         - name: provider_id
           in: query
           schema:
@@ -999,16 +978,11 @@ paths:
                     items: []
         "400":
           $ref: "#/components/responses/ValidationError"
-  /api/v1/providers/{provider}/games/{game_uuid}/lobby:
+  /api/v1/game-aggregator/games/{game_uuid}/lobby:
     get:
       tags: [Slotegrator]
       summary: Get lobby tables for a game
       parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
         - name: game_uuid
           in: path
           required: true
@@ -1035,16 +1009,10 @@ paths:
           $ref: "#/components/responses/ValidationError"
         "404":
           $ref: "#/components/responses/NotFound"
-  /api/v1/providers/{provider}/games/sync:
+  /api/v1/game-aggregator/games/sync:
     post:
       tags: [Slotegrator]
       summary: Sync games
-      parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         required: false
         content:
@@ -1058,16 +1026,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SlotegratorSyncResponse"
-  /api/v1/providers/{provider}/games/sync/status:
+  /api/v1/game-aggregator/games/sync/status:
     get:
       tags: [Slotegrator]
       summary: Games sync status
       parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
         - name: limit
           in: query
           schema:
@@ -1085,16 +1048,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SlotegratorSyncStatusResponse"
-  /api/v1/providers/{provider}/launch:
+  /api/v1/game-aggregator/launch:
     post:
       tags: [Slotegrator]
       summary: Launch game
-      parameters:
-        - name: provider
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
