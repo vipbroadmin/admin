@@ -20,7 +20,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route('/api/v1/finances/withdrawal-requests')]
 final class WithdrawalController extends AbstractController
 {
-    #[Route('', methods: ['GET'])]
+    #[Route('', name: 'api_withdrawal_list', methods: ['GET'], priority: 10)]
     public function list(Request $request, WithdrawalsServiceClient $client): JsonResponse
     {
         $params = [
@@ -45,7 +45,7 @@ final class WithdrawalController extends AbstractController
         }
     }
 
-    #[Route('/{id}', methods: ['GET'])]
+    #[Route('/{id}', methods: ['GET'], requirements: ['id' => '[^/]+'])]
     public function getById(
         string $id,
         ValidatorInterface $validator,
@@ -83,7 +83,7 @@ final class WithdrawalController extends AbstractController
         }
     }
 
-    #[Route('', methods: ['POST'])]
+    #[Route('', methods: ['POST'], priority: -10)]
     public function create(
         Request $request,
         ValidatorInterface $validator,
