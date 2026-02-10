@@ -533,6 +533,40 @@ paths:
         "422":
           $ref: "#/components/responses/ValidationError"
   /api/v1/finances/withdrawal-requests:
+    get:
+      tags: [Withdrawals]
+      summary: List withdrawal requests
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Withdrawal requests list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
     post:
       tags: [Withdrawals]
       summary: Create withdrawal request
@@ -696,6 +730,41 @@ paths:
           $ref: "#/components/responses/NotFound"
         "422":
           $ref: "#/components/responses/ValidationError"
+  /api/v1/finances/deposit-requests:
+    get:
+      tags: [Withdrawals]
+      summary: List deposit requests
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deposit requests list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
   /api/v1/finances/reports/transactions:
     get:
       tags: [Reports]

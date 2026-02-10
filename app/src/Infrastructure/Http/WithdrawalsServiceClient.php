@@ -5,6 +5,20 @@ namespace App\Infrastructure\Http;
 final class WithdrawalsServiceClient extends BaseHttpClient
 {
     /**
+     * GET /finances/withdrawal-requests
+     *
+     * @param array{limit?: int, offset?: int, userId?: string} $queryParams
+     * @return array{items: array<int, array<string, mixed>>, limit: int, offset: int}
+     */
+    public function listWithdrawalRequests(array $queryParams = []): array
+    {
+        $queryString = http_build_query(array_filter($queryParams, fn($v) => $v !== null && $v !== ''));
+        $endpoint = '/finances/withdrawal-requests' . ($queryString !== '' ? '?' . $queryString : '');
+        $response = $this->request('GET', $endpoint);
+        return $this->decodeResponse($response);
+    }
+
+    /**
      * GET /finances/withdrawal-requests/{id}
      *
      * @return array<string, mixed>
@@ -103,6 +117,20 @@ final class WithdrawalsServiceClient extends BaseHttpClient
     public function returnRequest(string $id, string $managerId, string $managerRole): array
     {
         return $this->postWithManagerHeaders("/finances/withdrawal-requests/{$id}/return", $managerId, $managerRole);
+    }
+
+    /**
+     * GET /finances/deposit-requests
+     *
+     * @param array{limit?: int, offset?: int, userId?: string} $queryParams
+     * @return array{items: array<int, array<string, mixed>>, limit: int, offset: int}
+     */
+    public function listDepositRequests(array $queryParams = []): array
+    {
+        $queryString = http_build_query(array_filter($queryParams, fn($v) => $v !== null && $v !== ''));
+        $endpoint = '/finances/deposit-requests' . ($queryString !== '' ? '?' . $queryString : '');
+        $response = $this->request('GET', $endpoint);
+        return $this->decodeResponse($response);
     }
 
     /**
